@@ -3,6 +3,7 @@ const intro = document.getElementById("intro");
 const game = document.getElementById("game");
 let current = 0;
 let clicks = 0;
+let clickStreak = 0;
 
 function nextScreen(){
     if(current >= screens.length){
@@ -44,17 +45,63 @@ setInterval(() => {
 
 const nemo = document.getElementById("nemo");
 const clickCounter = document.getElementById("clickCounter");
+const streakCounter = document.getElementById("streakCounter");
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
 nemo.addEventListener("click", () => {
     clicks++;
+    clickStreak++;
+    streakCounter.textContent = "🔥 Combo x" + clickStreak;
+    streakCounter.style.transform = "scale(1.2)";
+    setTimeout(() => {
+        streakCounter.style.transform = "scale(1)";
+    }, 100);
+    clearTimeout(window.streakTimer);
+    window.streakTimer = setTimeout(() => {
+        clickStreak = 0;
+        streakCounter.textContent = "Combo x0";
+    }, 500);
     updateCounter();
     createPopup();
+    juiceClick();
+    screenShake();
+    createSparkBurst();
 });
+function createSparkBurst(){
+    const rect = nemo.getBoundingClientRect();
+    for(let i=0; i<10; i++){
+        const spark = document.createElement("div");
+        spark.className = "spark";
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 80 + Math.random() * 40;
+        const startX = rect.left + rect.width / 2 + Math.cos(angle) * radius;
+        const startY = rect.top + rect.height / 2 + Math.sin(angle) * radius;
+        spark.style.left = startX + "px";
+        spark.style.top = startY + "px";
+        spark.style.setProperty("--x", (Math.random()-0.5)*80 + "px");
+        spark.style.setProperty("--y",(Math.random()-0.5)*80 + "px");
+        document.body.appendChild(spark);
+        setTimeout(()=>{spark.remove();}, 500);
+    }
+}
+function screenShake(){
+    document.body.classList.add("shake");
+    setTimeout(() => {
+        document.body.classList.remove("shake");
+    }, 120);
+}
+function juiceClick(){
+    const rotation = (Math.random() - 0.5) * 10;
+    nemo.style.transform = `scale(0.9) rotate(${rotation}deg)`;
+    setTimeout(() => {
+        nemo.style.transform = "scale(1) rotate(0deg)";
+    }, 80);
+}
 function createPopup(){
     const popup = document.createElement("div");
     popup.textContent = "+" + 1;
+    popup.style.scale = 0.8 + Math.random()*0.6;
     popup.className = "popup";
     const rect = nemo.getBoundingClientRect();
     const randomX = (Math.random() - 0.5) * 100;
