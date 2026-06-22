@@ -61,7 +61,7 @@ nemo.addEventListener("click", () => {
     window.streakTimer = setTimeout(() => {
         clickStreak = 0;
         streakCounter.textContent = "Combo x0";
-    }, 500);
+    }, 1000);
     updateCounter();
     createPopup();
     juiceClick();
