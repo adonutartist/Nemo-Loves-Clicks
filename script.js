@@ -35,7 +35,7 @@ setInterval(() => {
     const p = document.createElement("div");
     p.className = "particle";
     p.style.left = Math.random() * 100 + "%";
-    document.body.appendChild(p);
+    document.getElementById("particles").appendChild(p);
     setTimeout(() => {
         p.remove();
     }, 3000);

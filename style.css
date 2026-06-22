@@ -1,4 +1,12 @@
+@font-face {
+    font-family: "Determination";
+    src: url("assets/DeterminationSansWeb.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
 #intro{
+    font-family: "Determination", sans-serif;
     position: fixed;
     inset: 0;
     background: black;
@@ -10,6 +18,7 @@
 }
 
 .intro-text{
+    font-family: "Determination", sans-serif;
     position: absolute;
     text-align: center;
     font-size: 5rem;
@@ -18,17 +27,22 @@
     opacity: 0;
     transform: scale(.5);
     transition: all 1s ease;
+    z-index: 2;
 }
 
 .intro-text.active{
+    font-family: "Determination", sans-serif;
     opacity: 1;
     transform: scale(1);
+}
+
+.intro-text.active:not(.finalTitle){
+    font-family: "Determination" sans-serif;
     animation: pulse 1.5s infinite;
 }
 
-
-
 body{
+    font-family: "Determination", sans-serif;
     background: black;
 }
 
@@ -54,10 +68,13 @@ body{
 }
 
 .finalTitle{
-    animation: pulse 1s infinite, rainbow 2s infinite;
+    font-family: "Determination", sans-serif;
+    animation: rainbow .5s linear infinite, pulse .8s ease-in-out infinite;
+    font-size: 7rem;
 }
 
 #particles{
+    font-family: "Determination", sans-serif;
     position: fixed;
     inset: 0;
     overflow: hidden;
@@ -65,12 +82,14 @@ body{
 }
 
 .particle{
+    font-family: "Determination", sans-serif;
     position: fixed;
     width: 4px;
     height: 4px;
     background: white;
     border-radius: 50%;
     animation: floatUp 3s linear forwards;
+    z-index: 1;
 }
 
 @keyframes floatUp{
@@ -91,4 +110,5 @@ body{
     opacity: 0;
     pointer-events: none;
     transition: opacity .15s;
+    z-index: 9999;
 }
