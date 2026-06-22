@@ -49,18 +49,62 @@ const streakCounter = document.getElementById("streakCounter");
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
+function setWavyText(text){
+    streakCounter.innerHTML = "";
+    [...text].forEach((char, index)=>{
+        const span = document.createElement("span");
+        span.className = "waveLetter";
+        span.textContent = char;
+        span.style.animationDelay = (index * 0.08) + "s";
+        streakCounter.appendChild(span);
+    });
+}
 nemo.addEventListener("click", () => {
     clicks++;
     clickStreak++;
-    streakCounter.textContent = "🔥 Combo x" + clickStreak;
-    streakCounter.style.transform = "scale(1.2)";
-    setTimeout(() => {
-        streakCounter.style.transform = "scale(1)";
-    }, 100);
+    let title = "Combo";
+    if(clickStreak >= 30){
+        title = "MONSTER";
+    }
+    else if(clickStreak >= 20){
+        title = "INSANE";
+    }
+    else if(clickStreak >= 10){
+        title = "FAST";
+    }
+    const comboText = `🔥 ${title} x${clickStreak}`;
+    if(clickStreak >= 20){
+        setWavyText(comboText);
+    }
+    else{
+        streakCounter.textContent = comboText;
+    }
+    if(clickStreak >= 30){
+        streakCounter.style.color = "#ff00ff";
+    }
+    else if(clickStreak >= 20){
+        streakCounter.style.color = "#ff3333";
+    }
+    else if(clickStreak >= 10){
+        streakCounter.style.color = "#ff9900";
+    }
+    else if(clickStreak >= 5){
+        streakCounter.style.color = "#ffff00";
+    }
+    else{
+        streakCounter.style.color = "white";
+    }
+    if(clickStreak < 20){
+        streakCounter.style.transform = "scale(1.2)";
+        setTimeout(() => {
+            streakCounter.style.transform = "scale(1)";
+        }, 100);
+    }
     clearTimeout(window.streakTimer);
     window.streakTimer = setTimeout(() => {
         clickStreak = 0;
-        streakCounter.textContent = "Combo x0";
+        streakCounter.textContent = "🔥 Combo x0";
+        streakCounter.style.color = "white";
     }, 1000);
     updateCounter();
     createPopup();
