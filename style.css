@@ -42,6 +42,7 @@
 }
 
 body{
+    margin: 0;
     font-family: "Determination", sans-serif;
     background: black;
 }
@@ -111,4 +112,62 @@ body{
     pointer-events: none;
     transition: opacity .15s;
     z-index: 9999;
+}
+
+#game{
+    width: 100vw;
+    font-family: "Determination", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    min-height: 100vh;
+    padding-top: 50px;
+}
+
+#game h1{
+    font-family: "Determination", sans-serif;
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+#clickCounter{
+    font-family: "Determination", sans-serif;
+    font-size: 2rem;
+    margin-bottom: 25px;
+}
+
+#nemo{
+    width: 256px;
+    image-rendering: pixelated;
+    cursor: pointer;
+    transition: transform .08s;
+    z-index: 10;
+}
+
+#nemo:active{
+    transform: scale(.9);
+}
+
+@keyframes popupFloat{
+    from{
+        transform: translate(-50%, -50%) translateY(0);
+        opacity: 1;
+    }
+    to{
+        transform: translate(-50%, -50%) translateY(-80px);
+        opacity: 0;
+    }
+}
+
+.popup{
+    font-family: "Determination", sans-serif;
+    position: fixed;
+    color: #ffd700;
+    font-size: 2rem;
+    pointer-events: none;
+    animation: popupFloat 2s forwards;
+    text-shadow: 2px 2px 0px #a86f00;
+    transform: translate(-50%, -50%);
+    z-index: 20;
 }
