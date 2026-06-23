@@ -80,7 +80,7 @@ nemo.addEventListener("click", () => {
     comboNumber.textContent = "x" + clickStreak;
     if(title !== currentTitle){
         currentTitle = title;
-        if(clickStreak >= 40){
+        if(clickStreak >= 20){
             setWavyText("🔥 " + title);
         }
         else{
