@@ -1,6 +1,7 @@
 const screens = document.querySelectorAll(".intro-text");
 const intro = document.getElementById("intro");
 const game = document.getElementById("game");
+const multiplierDisplay = document.getElementById("multiplierDisplay");
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
@@ -50,6 +51,23 @@ const clickCounter = document.getElementById("clickCounter");
 const streakCounter = document.getElementById("streakCounter");
 const comboTitle = document.getElementById("comboTitle");
 const comboNumber = document.getElementById("comboNumber");
+function updateNemoSprite(){
+    if(clicks >= 40){
+        nemo.src = "assets/attachments (2)/sprite (15).png";
+    }
+    else if(clicks >= 30){
+        nemo.src = "assets/attachments (2)/sprite (24).png";
+    }
+    else if(clicks >= 20){
+        nemo.src = "assets/attachments (2)/sprite (25).png";
+    }
+    else if(clicks >= 10){
+        nemo.src = "assets/attachments (2)/sprite (16).png";
+    }
+    else if(clicks >= 5){
+        nemo.src = "assets/attachments (2)/sprite (11).png";
+    }
+}
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
@@ -64,7 +82,25 @@ function setWavyText(text){
     });
 }
 nemo.addEventListener("click", () => {
-    clicks++;
+    let multiplier = 1;
+    if(clickStreak >= 100){
+        multiplier = 10;
+    }
+    else if(clickStreak >= 75){
+        multiplier = 5;
+    }
+    else if(clickStreak >= 50){
+        multiplier = 3;
+    }
+    else if(clickStreak >= 25){
+        multiplier = 2;
+    }
+    let clickValue = multiplier;
+    if(Math.random() < 0.05){
+        clickValue *= 10;
+    }
+    clicks += clickValue;
+    multiplierDisplay.textContent = "x" + multiplier + "Multiplier";
     clickStreak++;
     let title = "Combo";
     if(clickStreak >= 30){
@@ -116,12 +152,44 @@ nemo.addEventListener("click", () => {
         currentTitle = "";
         streakCounter.style.color = "white";
     }, 1000);
+    if(clickStreak >= 60){
+        for(let i=0; i<4; i++){
+            createOra();
+        }
+    }
+    else if(clickStreak >= 40){
+        for(let i=0; i<2; i++){
+            createOra();
+        }
+    }
+    else if(clickStreak >= 30){
+        createOra();
+    }
     updateCounter();
-    createPopup();
+    updateNemoSprite();
+    createPopup(clickValue);
     juiceClick();
     screenShake();
     createSparkBurst();
 });
+function createOra(){
+    const ora = document.createElement("img");
+    ora.src = "assets/attachments (4)/ora.png";
+    ora.className = "ora";
+    const rect = nemo.getBoundingClientRect();
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 100 + Math.random() * 120;
+    ora.style.left = rect.left + rect.width/2 + Math.cos(angle)*distance + "px"; 
+    ora.style.top = rect.top + rect.height/2 + Math.sin(angle)*distance + "px";
+    document.body.appendChild(ora);
+    nemo.style.transform = "scale(1.15) rotate(-8deg)";
+    setTimeout(()=>{
+        nemo.style.transform = "scale(1) rotate(0deg)";
+    }, 50);
+    setTimeout(()=>{
+        ora.remove();
+    }, 600);
+}
 function createSparkBurst(){
     const rect = nemo.getBoundingClientRect();
     for(let i=0; i<10; i++){
@@ -152,9 +220,16 @@ function juiceClick(){
         nemo.style.transform = "scale(1) rotate(0deg)";
     }, 80);
 }
-function createPopup(){
+function createPopup(value){
     const popup = document.createElement("div");
-    popup.textContent = "+" + 1;
+    if(value > 1){
+        popup.textContent = "CRIT! +" + value;
+        popup.style.fontSize = "3rem";
+        popup.style.color = "red";
+    }
+    else{
+        popup.textContent = "+" + value;
+    }
     popup.style.scale = 0.8 + Math.random()*0.6;
     popup.className = "popup";
     const rect = nemo.getBoundingClientRect();
