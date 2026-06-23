@@ -4,6 +4,8 @@ const game = document.getElementById("game");
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
+let currentTitle = "";
+let lastComboText = "";
 
 function nextScreen(){
     if(current >= screens.length){
@@ -46,17 +48,19 @@ setInterval(() => {
 const nemo = document.getElementById("nemo");
 const clickCounter = document.getElementById("clickCounter");
 const streakCounter = document.getElementById("streakCounter");
+const comboTitle = document.getElementById("comboTitle");
+const comboNumber = document.getElementById("comboNumber");
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
 function setWavyText(text){
-    streakCounter.innerHTML = "";
+    comboTitle.innerHTML = "";
     [...text].forEach((char, index)=>{
         const span = document.createElement("span");
         span.className = "waveLetter";
         span.textContent = char;
         span.style.animationDelay = (index * 0.08) + "s";
-        streakCounter.appendChild(span);
+        comboTitle.appendChild(span);
     });
 }
 nemo.addEventListener("click", () => {
@@ -73,11 +77,15 @@ nemo.addEventListener("click", () => {
         title = "FAST";
     }
     const comboText = `🔥 ${title} x${clickStreak}`;
-    if(clickStreak >= 20){
-        setWavyText(comboText);
-    }
-    else{
-        streakCounter.textContent = comboText;
+    comboNumber.textContent = "x" + clickStreak;
+    if(title !== currentTitle){
+        currentTitle = title;
+        if(clickStreak >= 40){
+            setWavyText("🔥 " + title);
+        }
+        else{
+            comboTitle.textContent = "🔥 " + title;
+        }
     }
     if(clickStreak >= 30){
         streakCounter.style.color = "#ff00ff";
@@ -94,7 +102,7 @@ nemo.addEventListener("click", () => {
     else{
         streakCounter.style.color = "white";
     }
-    if(clickStreak < 20){
+    if(clickStreak > 50){
         streakCounter.style.transform = "scale(1.2)";
         setTimeout(() => {
             streakCounter.style.transform = "scale(1)";
@@ -103,7 +111,9 @@ nemo.addEventListener("click", () => {
     clearTimeout(window.streakTimer);
     window.streakTimer = setTimeout(() => {
         clickStreak = 0;
-        streakCounter.textContent = "🔥 Combo x0";
+        comboTitle.textContent = "🔥 Combo";
+        comboNumber.textContent = "x0";
+        currentTitle = "";
         streakCounter.style.color = "white";
     }, 1000);
     updateCounter();
