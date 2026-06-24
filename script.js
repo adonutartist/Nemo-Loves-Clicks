@@ -53,7 +53,7 @@ setInterval(() => {
     setTimeout(() => {
         p.remove();
     }, 3000);
-}, 150);
+}, 300);
 
 const nemo = document.getElementById("nemo");
 const clickCounter = document.getElementById("clickCounter");
@@ -242,7 +242,7 @@ function createOra(){
 }
 function createSparkBurst(){
     const rect = nemo.getBoundingClientRect();
-    for(let i=0; i<10; i++){
+    for(let i=0; i<5; i++){
         const spark = document.createElement("div");
         spark.className = "spark";
         const angle = Math.random() * Math.PI * 2;
@@ -294,12 +294,17 @@ function createPopup(value, isCrit){
 
     setTimeout(()=>{
         popup.remove();
-    }, 1800);
+    }, 800);
+}
+function updateShop(){
+    buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned)`;
 }
 function saveGame(){
     const saveData = {
         clicks: clicks,
-        achievements: achievements
+        achievements: achievements,
+        cursorLevel: cursorLevel,
+        bonusClicks: bonusClicks
     };
     localStorage.setItem(
         "nemoSave",
@@ -319,9 +324,12 @@ function loadGame(){
     }
     clicks = saveData.clicks || 0;
     achievements = saveData.achievements || [];
+    cursorLevel = saveData.cursorLevel || 0;
+    bonusClicks = saveData.bonusClicks || 0;
     updateCounter();
     updateTitle();
     updateNemoSprite();
+    updateShop();
 }
 shopButton.addEventListener("click", ()=>{
     shop.style.display = "block";
@@ -337,6 +345,7 @@ buyCursor.addEventListener("click", ()=>{
     }
     clicks -= 50;
     cursorLevel++;
+    buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned)`;
     bonusClicks++;
     updateCounter();
     saveGame();
