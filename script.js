@@ -8,6 +8,7 @@ const saveText = document.getElementById("saveText");
 const shopButton = document.getElementById("shopButton");
 const shop = document.getElementById("shop");
 const buyCursor = document.getElementById("buyCursor");
+const shopOverlay = document.getElementById("shopOverlay");
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
@@ -323,12 +324,12 @@ function loadGame(){
     updateNemoSprite();
 }
 shopButton.addEventListener("click", ()=>{
-    if(shop.style.display === "block"){
-        shop.style.display = "none";
-    }
-    else{
-        shop.style.display = "block";
-    }
+    shop.style.display = "block";
+    shopOverlay.style.display = "block";
+});
+shopOverlay.addEventListener("click", ()=>{
+    shop.style.display = "none";
+    shopOverlay.style.display = "none";
 });
 buyCursor.addEventListener("click", ()=>{
     if(clicks < 50){

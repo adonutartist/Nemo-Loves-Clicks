@@ -189,7 +189,7 @@ body{
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: gold;
+    background: white;
     pointer-events: none;
     animation: sparkFly .5s forwards;
     z-index: 20;
@@ -286,9 +286,27 @@ body{
 }
 
 #shopButton{
-    margin-top: 20px;
-    font-size: 1.2rem;
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
     cursor: pointer;
+    transition: .15s;
+}
+
+#shopButton:hover{
+    transform: scale(1.1);
+}
+
+#shopButton:active{
+    transform: scale(.95);
+}
+
+#shopOverlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: none;
+    z-index: 9998;
 }
 
 #shop{
