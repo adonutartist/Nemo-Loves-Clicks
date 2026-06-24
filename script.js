@@ -65,7 +65,6 @@ setInterval(() => {
         p.remove();
     }, 3000);
 }, 300);
-
 const nemo = document.getElementById("nemo");
 const clickCounter = document.getElementById("clickCounter");
 const streakCounter = document.getElementById("streakCounter");
@@ -294,16 +293,21 @@ function clankerAttack(){
     });
 }
 function getClankerSpeed(){
-    return Math.max(500, 5000 - (clankerJuiceLevel * 500));
+    return Math.max(300, 5000 - (clankerJuiceLevel * 250));
 }
-setInterval(()=>{
-    if(!clankerActive || clankers <= 0){
-        return;
+function startClankerLoop(){
+    clearTimeout(window.clankerTimer);
+    function attack(){
+        if(clankerActive && clankers > 0){
+            clicks += clankers;
+            updateCounter();
+            clankerAttack();
+            saveGame();
+        }
+        window.clankerTimer = setTimeout(attack, getClankerSpeed());
     }
-    clicks += clankers;
-    updateCounter();
-    clankerAttack();
-}, 1000);
+    attack();
+}
 function createPopup(value, isCrit){
     const popup = document.createElement("div");
     if(isCrit){
@@ -375,17 +379,21 @@ function loadGame(){
     if(!saveData){
         return;
     }
-    for(let i = 0; i < clankers; i++){
-        spawnClanker;
-    }
     clicks = saveData.clicks || 0;
     achievements = saveData.achievements || [];
     cursorLevel = saveData.cursorLevel || 0;
     bonusClicks = saveData.bonusClicks || 0;
     cursorPrice = saveData.cursorPrice || 50;
     clankers = saveData.clankers || 0;
+    document.getElementById("clankerContainer").innerHTML = "";
+    for(let i = 0; i < clankers; i++){
+        spawnClanker();
+    }
     clankerPrice = saveData.clankerPrice || 1000;
     clankerJuiceLevel = saveData.clankerJuiceLevel || 0;
+    if(clankerJuiceLevel > 0){
+        clankerActive = true;
+    }
     clankerJuicePrice = saveData.clankerJuicePrice || 500;
     updateCounter();
     updateTitle();
@@ -445,3 +453,4 @@ buyClankerJuice.addEventListener("click", ()=>{
     saveGame();
 });
 loadGame();
+startClankerLoop();
