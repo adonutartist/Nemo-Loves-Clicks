@@ -8,6 +8,10 @@ const saveText = document.getElementById("saveText");
 const shopButton = document.getElementById("shopButton");
 const shop = document.getElementById("shop");
 const buyCursor = document.getElementById("buyCursor");
+const buyClanker = document.getElementById("buyClanker");
+const buyClankerJuice = document.getElementById("buyClankerJuice");
+const foodButton = document.getElementById("foodButton");
+const foodShop = document.getElementById("foodShop");
 const shopOverlay = document.getElementById("shopOverlay");
 let current = 0;
 let clicks = 0;
@@ -18,6 +22,12 @@ let achievements = [];
 let cursorLevel = 0;
 let bonusClicks = 0;
 let cursorPrice = 50;
+let critBonus = 0;
+let clankers = 0;
+let clankerPrice = 1000;
+let clankerJuiceLevel = 0;
+let clankerJuicePrice = 500;
+let clankerActive = false;
 function nextScreen(){
     if(current >= screens.length){
         return;
@@ -61,6 +71,12 @@ const clickCounter = document.getElementById("clickCounter");
 const streakCounter = document.getElementById("streakCounter");
 const comboTitle = document.getElementById("comboTitle");
 const comboNumber = document.getElementById("comboNumber");
+function spawnClanker(){
+    const clanker = document.createElement("img");
+    clanker.src = "assets/attachments (2)/sprite (27).png"
+    clanker.className = "clanker";
+    document.getElementById("clankerContainer").appendChild(clanker);
+}
 function unlockAchievement(name){
     if(achievements.includes(name)){
         return;
@@ -271,6 +287,23 @@ function juiceClick(){
         nemo.style.transform = "scale(1) rotate(0deg)";
     }, 80);
 }
+function clankerAttack(){
+    const allClankers = document.querySelectorAll(".clanker");
+    allClankers.forEach(clanker=>{
+        clanker.animate([{transform: "translateX(0px)"}, {transform: "translateX(-40px)"}, {transform: "translateX(0px)"}], {duration: 300});
+    });
+}
+function getClankerSpeed(){
+    return Math.max(500, 5000 - (clankerJuiceLevel * 500));
+}
+setInterval(()=>{
+    if(!clankerActive || clankers <= 0){
+        return;
+    }
+    clicks += clankers;
+    updateCounter();
+    clankerAttack();
+}, 1000);
 function createPopup(value, isCrit){
     const popup = document.createElement("div");
     if(isCrit){
@@ -311,6 +344,8 @@ function createSpendPopup(amount){
 }
 function updateShop(){
     buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned) - ${cursorPrice}`;
+    buyClanker.textContent = `Clanker (${clankers}) - ${clankerPrice}`;
+    buyClankerJuice.textContent = `Clanker Juice Lv.${clankerJuiceLevel} - ${clankerJuicePrice}`;
 }
 function saveGame(){
     const saveData = {
@@ -318,7 +353,11 @@ function saveGame(){
         achievements: achievements,
         cursorLevel: cursorLevel,
         bonusClicks: bonusClicks,
-        cursorPrice: cursorPrice
+        cursorPrice: cursorPrice,
+        clankers: clankers,
+        clankerPrice: clankerPrice,
+        clankerJuiceLevel: clankerJuiceLevel,
+        clankerJuicePrice: clankerJuicePrice
     };
     localStorage.setItem(
         "nemoSave",
@@ -336,11 +375,18 @@ function loadGame(){
     if(!saveData){
         return;
     }
+    for(let i = 0; i < clankers; i++){
+        spawnClanker;
+    }
     clicks = saveData.clicks || 0;
     achievements = saveData.achievements || [];
     cursorLevel = saveData.cursorLevel || 0;
     bonusClicks = saveData.bonusClicks || 0;
     cursorPrice = saveData.cursorPrice || 50;
+    clankers = saveData.clankers || 0;
+    clankerPrice = saveData.clankerPrice || 1000;
+    clankerJuiceLevel = saveData.clankerJuiceLevel || 0;
+    clankerJuicePrice = saveData.clankerJuicePrice || 500;
     updateCounter();
     updateTitle();
     updateNemoSprite();
@@ -352,7 +398,12 @@ shopButton.addEventListener("click", ()=>{
 });
 shopOverlay.addEventListener("click", ()=>{
     shop.style.display = "none";
+    foodShop.style.display = "none";
     shopOverlay.style.display = "none";
+});
+foodButton.addEventListener("click", ()=>{
+    foodShop.style.display = "block";
+    shopOverlay.style.display = "block";
 });
 buyCursor.addEventListener("click", ()=>{
     if(clicks < cursorPrice){
@@ -363,6 +414,32 @@ buyCursor.addEventListener("click", ()=>{
     cursorLevel++;
     bonusClicks++;
     cursorPrice = Math.floor(cursorPrice * 1.5);
+    updateCounter();
+    updateShop();
+    saveGame();
+});
+buyClanker.addEventListener("click", ()=>{
+    if(clicks <clankerPrice){
+        return;
+    }
+    clicks -= clankerPrice;
+    createSpendPopup(clankerPrice);
+    clankers++;
+    spawnClanker();
+    clankerPrice = Math.floor(clankerPrice * 1.8);
+    updateCounter();
+    updateShop();
+    saveGame();
+});
+buyClankerJuice.addEventListener("click", ()=>{
+    if(clicks < clankerJuicePrice){
+        return;
+    }
+    clicks -= clankerJuicePrice;
+    createSpendPopup(clankerJuicePrice);
+    clankerJuiceLevel++;
+    clankerActive = true;
+    clankerJuicePrice = Math.floor(clankerJuicePrice * 2);
     updateCounter();
     updateShop();
     saveGame();
