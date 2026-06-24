@@ -17,6 +17,7 @@ let lastComboText = "";
 let achievements = [];
 let cursorLevel = 0;
 let bonusClicks = 0;
+let cursorPrice = 50;
 function nextScreen(){
     if(current >= screens.length){
         return;
@@ -296,15 +297,28 @@ function createPopup(value, isCrit){
         popup.remove();
     }, 800);
 }
+function createSpendPopup(amount){
+    const popup = document.createElement("div");
+    popup.textContent = "-" + amount;
+    popup.className = "spendPopup";
+    const counter = clickCounter.getBoundingClientRect();
+    popup.style.left = counter.left + "px";
+    popup.style.top = counter.top + "px";
+    document.body.appendChild(popup);
+    setTimeout(()=>{
+        popup.remove();
+    }, 1000);
+}
 function updateShop(){
-    buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned)`;
+    buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned) - ${cursorPrice}`;
 }
 function saveGame(){
     const saveData = {
         clicks: clicks,
         achievements: achievements,
         cursorLevel: cursorLevel,
-        bonusClicks: bonusClicks
+        bonusClicks: bonusClicks,
+        cursorPrice: cursorPrice
     };
     localStorage.setItem(
         "nemoSave",
@@ -326,6 +340,7 @@ function loadGame(){
     achievements = saveData.achievements || [];
     cursorLevel = saveData.cursorLevel || 0;
     bonusClicks = saveData.bonusClicks || 0;
+    cursorPrice = saveData.cursorPrice || 50;
     updateCounter();
     updateTitle();
     updateNemoSprite();
@@ -340,14 +355,16 @@ shopOverlay.addEventListener("click", ()=>{
     shopOverlay.style.display = "none";
 });
 buyCursor.addEventListener("click", ()=>{
-    if(clicks < 50){
+    if(clicks < cursorPrice){
         return;
     }
-    clicks -= 50;
+    clicks -= cursorPrice;
+    createSpendPopup(cursorPrice);
     cursorLevel++;
-    buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned)`;
     bonusClicks++;
+    cursorPrice = Math.floor(cursorPrice * 1.5);
     updateCounter();
+    updateShop();
     saveGame();
 });
 loadGame();

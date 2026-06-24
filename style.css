@@ -41,8 +41,12 @@
     animation: pulse 1.5s infinite;
 }
 
-body{
+html, body{
     margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     font-family: "Determination", sans-serif;
     background: black;
 }
@@ -121,7 +125,8 @@ body{
     flex-direction: column;
     align-items: center;
     color: white;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     padding-top: 50px;
 }
 
@@ -286,6 +291,10 @@ body{
 }
 
 #shopButton{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
     width: 96px;
     height: 96px;
     object-fit: contain;
@@ -320,4 +329,24 @@ body{
     padding: 20px;
     border-radius: 15px;
     z-index: 9999;
+}
+
+.spendPopup{
+    position: fixed;
+    color: red;
+    font-size: 2rem;
+    font-weight: bold;
+    pointer-events: none;
+    animation: spendFloat 1s forwards;
+}
+
+@keyframes spendFloat{
+    from{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    to{
+        opacity: 0;
+        transform: translateY(-50px);
+    }
 }
