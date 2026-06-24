@@ -5,12 +5,17 @@ const multiplierDisplay = document.getElementById("multiplierDisplay");
 const playerTitle = document.getElementById("playerTitle");
 const achievementToast = document.getElementById("achievementToast");
 const saveText = document.getElementById("saveText");
+const shopButton = document.getElementById("shopButton");
+const shop = document.getElementById("shop");
+const buyCursor = document.getElementById("buyCursor");
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
 let currentTitle = "";
 let lastComboText = "";
 let achievements = [];
+let cursorLevel = 0;
+let bonusClicks = 0;
 function nextScreen(){
     if(current >= screens.length){
         return;
@@ -134,7 +139,7 @@ nemo.addEventListener("click", () => {
     else if(clickStreak >= 25){
         multiplier = 2;
     }
-    let clickValue = multiplier;
+    let clickValue = multiplier + bonusClicks;
     let isCrit = false;
     if(Math.random() < 0.05){
         clickValue *= 10;
@@ -317,4 +322,22 @@ function loadGame(){
     updateTitle();
     updateNemoSprite();
 }
+shopButton.addEventListener("click", ()=>{
+    if(shop.style.display === "block"){
+        shop.style.display = "none";
+    }
+    else{
+        shop.style.display = "block";
+    }
+});
+buyCursor.addEventListener("click", ()=>{
+    if(clicks < 50){
+        return;
+    }
+    clicks -= 50;
+    cursorLevel++;
+    bonusClicks++;
+    updateCounter();
+    saveGame();
+});
 loadGame();
