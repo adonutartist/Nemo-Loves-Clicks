@@ -13,6 +13,7 @@ const buyClankerJuice = document.getElementById("buyClankerJuice");
 const foodButton = document.getElementById("foodButton");
 const foodShop = document.getElementById("foodShop");
 const shopOverlay = document.getElementById("shopOverlay");
+const max_clankers = 4;
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
@@ -74,6 +75,16 @@ function spawnClanker(){
     const clanker = document.createElement("img");
     clanker.src = "assets/attachments (2)/sprite (27).png"
     clanker.className = "clanker";
+    const positions = [{left: "38%", top: "38%"}, {left: "62%", top: "38%"}, {left: "38%", top: "62%"}, {left:"62%", top: "62%"}];
+    const rotations = ["45deg", "135deg", "-45deg", "-135deg"];
+    const index = document.querySelectorAll(".clanker").length;
+    if(index >= 4){
+        return;
+    }
+    clanker.style.left = positions[index].left;
+    clanker.style.top = positions[index].top;
+    clanker.style.rotate = rotations[index];
+    clanker.style.transform = `translater(-50%, -50%) rotate(${rotations[index]})`;
     document.getElementById("clankerContainer").appendChild(clanker);
 }
 function unlockAchievement(name){
@@ -348,8 +359,21 @@ function createSpendPopup(amount){
 }
 function updateShop(){
     buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned) - ${cursorPrice}`;
-    buyClanker.textContent = `Clanker (${clankers}) - ${clankerPrice}`;
+    if(clankers >= max_clankers){
+        buyClanker.textContent = `Clanker (${clankers}/4) - MAX`;
+    }
+    else{
+        buyClanker.textContent = `Clanker (${clankers}/4) - ${clankerPrice}`;
+    }
     buyClankerJuice.textContent = `Clanker Juice Lv.${clankerJuiceLevel} - ${clankerJuicePrice}`;
+    if(clankers <= 0){
+        buyClankerJuice.disabled = true;
+        buyClankerJuice.style.opacity = "0.4";
+    }
+    else{
+        buyClankerJuice.disabled = false;
+        buyClankerJuice.style.opacity = "1";
+    }
 }
 function saveGame(){
     const saveData = {
@@ -428,6 +452,9 @@ buyCursor.addEventListener("click", ()=>{
 });
 buyClanker.addEventListener("click", ()=>{
     if(clicks <clankerPrice){
+        return;
+    }
+    if(clankers >= max_clankers){
         return;
     }
     clicks -= clankerPrice;
