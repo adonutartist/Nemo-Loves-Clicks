@@ -2,12 +2,14 @@ const screens = document.querySelectorAll(".intro-text");
 const intro = document.getElementById("intro");
 const game = document.getElementById("game");
 const multiplierDisplay = document.getElementById("multiplierDisplay");
+const playerTitle = document.getElementById("playerTitle");
+const achievementToast = document.getElementById("ahievementToast");
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
 let currentTitle = "";
 let lastComboText = "";
-
+let achievements = [];
 function nextScreen(){
     if(current >= screens.length){
         return;
@@ -51,6 +53,13 @@ const clickCounter = document.getElementById("clickCounter");
 const streakCounter = document.getElementById("streakCounter");
 const comboTitle = document.getElementById("comboTitle");
 const comboNumber = document.getElementById("comboNumber");
+function unlockAchievement(name){
+    if(achievements.includes(name)){
+        return;
+    }
+    achievements.push(name);
+    showAchievement(name);
+}
 function updateNemoSprite(){
     if(clicks >= 40){
         nemo.src = "assets/attachments (2)/sprite (15).png";
@@ -71,6 +80,28 @@ function updateNemoSprite(){
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
+function updateTitle(){
+    if(clicks >= 40){
+        playerTitle.textContent = "Nemo's Favourite Earthian";
+        unlockAchievement("Nemo's Favourite Earthian");
+    }
+    else if(clicks >= 30){
+        playerTitle.textContent = "Addicted to Clicking";
+        unlockAchievement("Addicted to Clicking");
+    }
+    else if(clicks >= 20){
+        playerTitle.textContent = "Loves Clicking";
+        unlockAchievement("Loves Clicking");
+    }
+    else if(clicks >= 10){
+        playerTitle.textContent =  "Click Click Click!";
+        unlockAchievement("Click Click Click!");
+    }
+    else if(clicks >= 5){
+        playerTitle.textContent =  "Clicking Gud for Health"
+        unlockAchievement("Clicking Gud for Health");
+    }
+}
 function setWavyText(text){
     comboTitle.innerHTML = "";
     [...text].forEach((char, index)=>{
@@ -80,6 +111,13 @@ function setWavyText(text){
         span.style.animationDelay = (index * 0.08) + "s";
         comboTitle.appendChild(span);
     });
+}
+function showAchievement(text){
+    achievementToast.textContent = "🏆 " + text;
+    achievementToast.style.right = "20px";
+    setTimeout(()=>{
+        achievementToast.style.right = "-500px";
+    }, 3000);
 }
 nemo.addEventListener("click", () => {
     let multiplier = 1;
@@ -96,11 +134,13 @@ nemo.addEventListener("click", () => {
         multiplier = 2;
     }
     let clickValue = multiplier;
+    let isCrit = false;
     if(Math.random() < 0.05){
         clickValue *= 10;
+        isCrit = true;
     }
     clicks += clickValue;
-    multiplierDisplay.textContent = "x" + multiplier + "Multiplier";
+    multiplierDisplay.textContent = "x" + multiplier + " Multiplier";
     clickStreak++;
     let title = "Combo";
     if(clickStreak >= 30){
@@ -151,6 +191,7 @@ nemo.addEventListener("click", () => {
         comboNumber.textContent = "x0";
         currentTitle = "";
         streakCounter.style.color = "white";
+        multiplierDisplay.textContent = "x1 Multiplier";
     }, 1000);
     if(clickStreak >= 60){
         for(let i=0; i<4; i++){
@@ -166,8 +207,9 @@ nemo.addEventListener("click", () => {
         createOra();
     }
     updateCounter();
+    updateTitle();
     updateNemoSprite();
-    createPopup(clickValue);
+    createPopup(clickValue, isCrit);
     juiceClick();
     screenShake();
     createSparkBurst();
@@ -220,9 +262,9 @@ function juiceClick(){
         nemo.style.transform = "scale(1) rotate(0deg)";
     }, 80);
 }
-function createPopup(value){
+function createPopup(value, isCrit){
     const popup = document.createElement("div");
-    if(value > 1){
+    if(isCrit){
         popup.textContent = "CRIT! +" + value;
         popup.style.fontSize = "3rem";
         popup.style.color = "red";

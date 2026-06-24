@@ -253,3 +253,26 @@ body{
     opacity: .8;
     margin-top: 10px;
 }
+
+#playerTitle{
+    margin-top: 15px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-align: center;
+    transition: .3s;
+}
+
+#achievementToast{
+    position: fixed;
+    top: 20px;
+    right: -500px;
+    padding: 20px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    background: #363636;
+    border: 3px solid gold;
+    border-radius: 15px;
+    color: white;
+    z-index: 9999;
+    transition: right .5s ease;
+}
