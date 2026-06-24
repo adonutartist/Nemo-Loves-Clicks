@@ -4,6 +4,7 @@ const game = document.getElementById("game");
 const multiplierDisplay = document.getElementById("multiplierDisplay");
 const playerTitle = document.getElementById("playerTitle");
 const achievementToast = document.getElementById("achievementToast");
+const saveText = document.getElementById("saveText");
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
@@ -207,6 +208,7 @@ nemo.addEventListener("click", () => {
         createOra();
     }
     updateCounter();
+    saveGame();
     updateTitle();
     updateNemoSprite();
     createPopup(clickValue, isCrit);
@@ -288,3 +290,31 @@ function createPopup(value, isCrit){
         popup.remove();
     }, 1800);
 }
+function saveGame(){
+    const saveData = {
+        clicks: clicks,
+        achievements: achievements
+    };
+    localStorage.setItem(
+        "nemoSave",
+        JSON.stringify(saveData)
+    );
+    saveText.style.opacity = "1";
+    setTimeout(()=>{
+        saveText.style.opacity = "0";
+    }, 500);
+}
+function loadGame(){
+    const saveData = JSON.parse(
+        localStorage.getItem("nemoSave")
+    );
+    if(!saveData){
+        return;
+    }
+    clicks = saveData.clicks || 0;
+    achievements = saveData.achievements || [];
+    updateCounter();
+    updateTitle();
+    updateNemoSprite();
+}
+loadGame();
