@@ -87,7 +87,7 @@ function positionClankers(){
     const nemoRect = nemo.getBoundingClientRect();
     const centerX = nemoRect.left + nemoRect.width / 2;
     const centerY = nemoRect.top + nemoRect.height / 2;
-    const positions = [{x:-200, y:-80, rotation:"-25", flip:true}, {x:200, y:-80, rotation:"-25", flip:false}, {x:-210, y:80, rotation:"25", flip:true}, {x:215, y:80, rotation:"25", flip:false}];
+    const positions = [{x:-200, y:-80, rotation:"-25", flip:true}, {x:200, y:-80, rotation:"-25", flip:false}, {x:-205, y:80, rotation:"25", flip:true}, {x:215, y:80, rotation:"25", flip:false}];
     document.querySelectorAll(".clanker").forEach((clanker,index)=>{
         const pos = positions[index];
         clanker.style.left = (centerX+pos.x) + "px";
@@ -309,20 +309,38 @@ function juiceClick(){
     }, 80);
 }
 function clankerAttack(){
-    const allClankers = document.querySelectorAll(".clanker");
-    const attacks = [{x:25, y:25}, {x:-25, y:25}, {x:25, y:-25}, {x:-25, y:-25}];
-    allClankers.forEach((clanker, index)=>{
-        clanker.animate([
+    const nemoRect = nemo.getBoundingClientRect();
+    const nemoX = nemoRect.left + nemoRect.width / 2;
+    const nemoY = nemoRect.top + nemoRect.height / 2;
+    document.querySelectorAll(".clanker").forEach((clanker)=>{
+        const clankerRect = clanker.getBoundingClientRect();
+        const clankerX = clankerRect.left + clankerRect.width / 2;
+        const clankerY = clankerRect.top + clankerRect.height / 2;
+        let dx = nemoX - clankerX;
+        let dy = nemoY - clankerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        dx = (dx / distance) * 40;
+        dy = (dy / distance) * 40;
+        if(clanker.style.transform.includes("scaleX(-1)")){
+            dx *= -1;
+        }
+        clanker.animate(
+            [
+                {
+                    transform: clanker.style.transform
+                },
+                {
+                    transform: clanker.style.transform + ` translate(${dx}px, ${dy}px)`
+                },
+                {
+                    transform: clanker.style.transform
+                }
+            ],
             {
-                transform: clanker.style.transform
-            },
-            {
-                transform: clanker.style.transform + ` translate(${attacks[index].x}px, ${attacks[index].y}px)`
-            },
-            {
-                transform: clanker.style.transform
+                duration: 200,
+                easing: "ease-out"
             }
-        ], {duration:250});
+        );
     });
 }
 function getClankerSpeed(){
