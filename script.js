@@ -75,17 +75,25 @@ function spawnClanker(){
     const clanker = document.createElement("img");
     clanker.src = "assets/attachments (2)/sprite (27).png"
     clanker.className = "clanker";
-    const positions = [{left: "38%", top: "38%"}, {left: "62%", top: "38%"}, {left: "38%", top: "62%"}, {left:"62%", top: "62%"}];
-    const rotations = ["45deg", "135deg", "-45deg", "-135deg"];
+    const nemoRect = nemo.getBoundingClientRect();
+    const centerX = nemoRect.left + nemoRect.width / 2;
+    const centerY = nemoRect.top + nemoRect.height / 2;
+    const positions = [{x:-180, y:-180, rotation:"45deg", flip:true}, {x:180, y:-180, rotation:"-45deg", flip:false}, {x:-180, y:180, rotation:"-45deg", flip:true}, {x:180, y:180, rotation:"45deg", flip:false}];
     const index = document.querySelectorAll(".clanker").length;
     if(index >= 4){
         return;
     }
-    clanker.style.left = positions[index].left;
-    clanker.style.top = positions[index].top;
-    clanker.style.rotate = rotations[index];
-    clanker.style.transform = `translater(-50%, -50%) rotate(${rotations[index]})`;
-    document.getElementById("clankerContainer").appendChild(clanker);
+    const pos = positions[index];
+    clanker.style.position = "fixed";
+    clanker.style.left = (centerX+pos.x) + "px";
+    clanker.style.top = (centerY+pos.y) + "px";
+    if(pos.flip){
+        clanker.style.transform = `translate(-50%, -50%) scaleX(-1) rotate(${pos.rotation}deg)`;
+    }
+    else{
+        clanker.style.transform = `translate(-50%, -50%) rotate(${pos.rotation}deg)`;
+    }
+    document.body.appendChild(clanker);
 }
 function unlockAchievement(name){
     if(achievements.includes(name)){
@@ -299,8 +307,19 @@ function juiceClick(){
 }
 function clankerAttack(){
     const allClankers = document.querySelectorAll(".clanker");
-    allClankers.forEach(clanker=>{
-        clanker.animate([{transform: "translateX(0px)"}, {transform: "translateX(-40px)"}, {transform: "translateX(0px)"}], {duration: 300});
+    const attacks = [{x:25, y:25}, {x:-25, y:25}, {x:25, y:-25}, {x:-25, y:-25}];
+    allClankers.forEach((clanker, index)=>{
+        clanker.animate([
+            {
+                transform: clanker.style.transform
+            },
+            {
+                transform: clanker.style.transform + ` translate(${attacks[index].x}px, ${attacks[index].y}px)`
+            },
+            {
+                transform: clanker.style.transform
+            }
+        ], {duration:250});
     });
 }
 function getClankerSpeed(){
@@ -409,7 +428,7 @@ function loadGame(){
     bonusClicks = saveData.bonusClicks || 0;
     cursorPrice = saveData.cursorPrice || 50;
     clankers = saveData.clankers || 0;
-    document.getElementById("clankerContainer").innerHTML = "";
+    document.querySelectorAll(".clanker").forEach(c => c.remove());
     for(let i = 0; i < clankers; i++){
         spawnClanker();
     }
