@@ -43,6 +43,7 @@ function nextScreen(){
             if(game){
                 game.style.display = "flex";
             }
+            positionClankers();
         }, 1000);
         return;
     }
@@ -75,25 +76,27 @@ function spawnClanker(){
     const clanker = document.createElement("img");
     clanker.src = "assets/attachments (2)/sprite (27).png"
     clanker.className = "clanker";
-    const nemoRect = nemo.getBoundingClientRect();
-    const centerX = nemoRect.left + nemoRect.width / 2;
-    const centerY = nemoRect.top + nemoRect.height / 2;
-    const positions = [{x:-180, y:-180, rotation:"45deg", flip:true}, {x:180, y:-180, rotation:"-45deg", flip:false}, {x:-180, y:180, rotation:"-45deg", flip:true}, {x:180, y:180, rotation:"45deg", flip:false}];
     const index = document.querySelectorAll(".clanker").length;
     if(index >= 4){
         return;
     }
-    const pos = positions[index];
-    clanker.style.position = "fixed";
-    clanker.style.left = (centerX+pos.x) + "px";
-    clanker.style.top = (centerY+pos.y) + "px";
-    if(pos.flip){
-        clanker.style.transform = `translate(-50%, -50%) scaleX(-1) rotate(${pos.rotation}deg)`;
-    }
-    else{
-        clanker.style.transform = `translate(-50%, -50%) rotate(${pos.rotation}deg)`;
-    }
     document.body.appendChild(clanker);
+    positionClankers();
+}
+function positionClankers(){
+    const nemoRect = nemo.getBoundingClientRect();
+    const centerX = nemoRect.left + nemoRect.width / 2;
+    const centerY = nemoRect.top + nemoRect.height / 2;
+    const positions = [{x:-200, y:-80, rotation:"-25", flip:true}, {x:200, y:-80, rotation:"-25", flip:false}, {x:-210, y:80, rotation:"25", flip:true}, {x:215, y:80, rotation:"25", flip:false}];
+    document.querySelectorAll(".clanker").forEach((clanker,index)=>{
+        const pos = positions[index];
+        clanker.style.left = (centerX+pos.x) + "px";
+        clanker.style.top = (centerY+pos.y) + "px";
+        clanker.style.transform = 
+            pos.flip
+            ? `translate(-50%, -50%) scaleX(-1) rotate(${pos.rotation}deg)`
+            : `translate(-50%, -50%) rotate(${pos.rotation}deg)`;
+    });
 }
 function unlockAchievement(name){
     if(achievements.includes(name)){
@@ -432,6 +435,7 @@ function loadGame(){
     for(let i = 0; i < clankers; i++){
         spawnClanker();
     }
+    positionClankers();
     clankerPrice = saveData.clankerPrice || 1000;
     clankerJuiceLevel = saveData.clankerJuiceLevel || 0;
     if(clankerJuiceLevel > 0){
@@ -480,6 +484,7 @@ buyClanker.addEventListener("click", ()=>{
     createSpendPopup(clankerPrice);
     clankers++;
     spawnClanker();
+    positionClankers();
     clankerPrice = Math.floor(clankerPrice * 1.8);
     updateCounter();
     updateShop();
@@ -493,10 +498,14 @@ buyClankerJuice.addEventListener("click", ()=>{
     createSpendPopup(clankerJuicePrice);
     clankerJuiceLevel++;
     clankerActive = true;
+    startClankerLoop();
     clankerJuicePrice = Math.floor(clankerJuicePrice * 2);
     updateCounter();
     updateShop();
     saveGame();
 });
 loadGame();
+positionClankers();
 startClankerLoop();
+
+window.addEventListener("resize", positionClankers);
