@@ -52,6 +52,10 @@ function nextScreen(){
                 game.style.display = "flex";
             }
             positionClankers();
+            document.querySelectorAll(".clanker").forEach(clanker=>{
+                clanker.style.opacity = "1";
+            });
+            startClankerLoop();
         }, 1000);
         return;
     }
@@ -368,6 +372,7 @@ function startClankerLoop(){
             for(let i=0;i<clankers;i++){
                 createRobotPopup(1);
             }
+            createSparkBurst();
             updateCounter();
             clankerAttack();
             saveGame();
@@ -461,13 +466,10 @@ function updateCursorFollowers(){
     }
 }
 function animateFollowers(){
-    if(game.style.display === "none"){
-        return;
-    }
     const followers = document.querySelectorAll(".cursorFollower");
     followers.forEach((follower,index)=>{
         const angle = Date.now()/500 + (index * Math.PI*2 / followers.length);
-        const radius = 40;
+        const radius = 50;
         follower.style.left = (mouseX + Math.cos(angle)*radius) + "px";
         follower.style.top = (mouseY + Math.sin(angle)*radius) + "px";
     });
@@ -547,6 +549,7 @@ buyCursor.addEventListener("click", ()=>{
     createSpendPopup(cursorPrice);
     cursorLevel++;
     bonusClicks++;
+    updateCursorFollowers();    
     cursorPrice = Math.floor(cursorPrice * 1.5);
     updateCounter();
     updateShop();
@@ -556,7 +559,6 @@ document.addEventListener("mousemove",(e)=>{
     mouseX = e.clientX
     mouseY = e.clientY;
 })
-updateCursorFollowers();
 buyClanker.addEventListener("click", ()=>{
     if(clicks <clankerPrice){
         return;
@@ -616,13 +618,12 @@ setInterval(()=>{
 }, 1000);
 loadGame();
 updateCursorFollowers();
-positionClankers();
-startClankerLoop();
+
 animateFollowers();
 
 window.addEventListener("resize", positionClankers);
 
 window.resetSave = function(){
     localStorage.removeItem("nemoSave");
-    localStorage.reload();
+    location.reload();
 }

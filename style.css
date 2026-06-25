@@ -343,6 +343,7 @@ button, img, #nemo{
 .spendPopup{
     position: fixed;
     color: red;
+    text-shadow: rgb(69, 11, 11);
     font-size: 2rem;
     font-weight: bold;
     pointer-events: none;
@@ -394,6 +395,7 @@ button, img, #nemo{
 }
 
 .clanker{
+    opacity: 0;
     position: fixed;
     width: 150px;
     image-rendering: pixelated;
@@ -431,6 +433,8 @@ button, img, #nemo{
 .cursorFollower{
     position: fixed;
     width: 32px;
+    height: 32px;
+    filter: drop-shadow(2px 2px 0px #a86f00);
     pointer-events: none;
     image-rendering: pixelated;
     z-index: 9999;
