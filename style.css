@@ -439,3 +439,10 @@ button, img, #nemo{
     image-rendering: pixelated;
     z-index: 9999;
 }
+
+#comboIcon{
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    vertical-align: middle;
+}
