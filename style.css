@@ -152,6 +152,7 @@ button, img, #nemo{
 }
 
 #nemo{
+    margin-top: 100px;
     width: 256px;
     image-rendering: pixelated;
     cursor: pointer;
@@ -445,7 +446,7 @@ button, img, #nemo{
     height: 40px;
     image-rendering: pixelated;
     vertical-align: middle;
-    margin-right: 8px;
+    margin-right: 2px;
 }
 
 .comboIcon{
@@ -453,5 +454,36 @@ button, img, #nemo{
     height: 40px;
     image-rendering: pixelated;
     vertical-align: middle;
-    
+    margin-right: 2px;
+}
+
+#clickCounter,
+#streakCounter,
+#multiplierDisplay,
+#playerTitle{
+    position: fixed;
+    right: 40px;
+    text-align: right;
+    z-index: 100;
+}
+
+#clickCounter{
+    top: 150px;
+    font-size: 2rem;
+}
+
+#streakCounter{
+    top: 210px;
+    font-size: 1.5rem;
+}
+
+#multiplierDisplay{
+    top: 270px;
+    font-size: 1.3rem;
+}
+
+#playerTitle{
+    top: 320px;
+    font-size: 1.6rem;
+    max-width: 300px;
 }

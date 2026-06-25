@@ -93,6 +93,9 @@ function spawnClanker(){
         return;
     }
     document.body.appendChild(clanker);
+    if(game.style.display !== "none"){
+        clanker.style.opacity = "1";
+    }
     positionClankers();
 }
 function positionClankers(){
