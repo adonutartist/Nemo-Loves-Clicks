@@ -385,16 +385,11 @@ html, body{
 }
 
 .clanker{
-    position: absolute;
+    position: fixed;
     width: 150px;
     image-rendering: pixelated;
-    left: 65%;
-    top: 55%;
-    transform-origin: center;
+    pointer-events: none;
+    transform-origin: center center;
+    z-index: 5;
 }
 
-#clankerContainer{
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-}
