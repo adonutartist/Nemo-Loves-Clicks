@@ -49,6 +49,15 @@ html, body{
     overflow: hidden;
     font-family: "Determination", sans-serif;
     background: black;
+    cursor: url("assets/attachments (1)/redheart.png"), auto;
+}
+
+button, img, #nemo{
+    cursor: url("assets/attachments (1)/redheart.png"), pointer;
+}
+
+*{
+    cursor: url("assets/attachments (1)/redheart.png"), auto !important;
 }
 
 @keyframes pulse {
@@ -392,3 +401,37 @@ html, body{
     transform-origin: center center;
     z-index: 5;
 } 
+
+#energyDrinkUI{
+    position: fixed;
+    right: 20px;
+    bottom: 80px;
+    display: none;
+    width: 96px;
+    height: 96px;
+    z-index: 1000;
+}
+
+#energyDrinkIcon{
+    width: 100%;
+    image-rendering: pixelated;
+}
+
+#energyDrinkFill{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 255, 255, .4);
+    transform-origin: bottom;
+    pointer-events: none;
+}
+
+.cursorFollower{
+    position: fixed;
+    width: 32px;
+    pointer-events: none;
+    image-rendering: pixelated;
+    z-index: 9999;
+}

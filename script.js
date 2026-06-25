@@ -12,8 +12,13 @@ const buyClanker = document.getElementById("buyClanker");
 const buyClankerJuice = document.getElementById("buyClankerJuice");
 const foodButton = document.getElementById("foodButton");
 const foodShop = document.getElementById("foodShop");
+const energyDrinkUI = document.getElementById("energyDrinkUI");
+const energyDrinkFill = document.getElementById("energyDrinkFill");
+const buyEnergyDrink = document.getElementById("buyEnergyDrink");
 const shopOverlay = document.getElementById("shopOverlay");
 const max_clankers = 4;
+let mouseX = 0;
+let mouseY = 0;
 let current = 0;
 let clicks = 0;
 let clickStreak = 0;
@@ -21,6 +26,7 @@ let currentTitle = "";
 let lastComboText = "";
 let achievements = [];
 let cursorLevel = 0;
+let maxCursorLevel = 10;
 let bonusClicks = 0;
 let cursorPrice = 50;
 let critBonus = 0;
@@ -29,8 +35,10 @@ let clankerPrice = 1000;
 let clankerJuiceLevel = 0;
 let clankerJuicePrice = 500;
 let clankerActive = false;
+let energyDrinkActive = false;
+let energyDrinkTime = 0;
 function nextScreen(){
-    if(current >= screens.length){
+    if(current >= screens.length){ 
         return;
     }
     screens[current].classList.remove("active");
@@ -180,8 +188,14 @@ nemo.addEventListener("click", () => {
     }
     let clickValue = multiplier + bonusClicks;
     let isCrit = false;
-    if(Math.random() < 0.05){
-        clickValue *= 10;
+    let critChance = 0.05;
+    let critMultiplier = 10;
+    if(energyDrinkActive){
+        critChance += 0.10;
+        critMultiplier += 15;
+    }
+    if(Math.random()<critChance){
+        clickValue *= critMultiplier;
         isCrit = true;
     }
     clicks += clickValue;
@@ -337,20 +351,23 @@ function clankerAttack(){
                 }
             ],
             {
-                duration: 200,
+                duration: Math.max(30, 150 - (clankerJuiceLevel * 10)),
                 easing: "ease-out"
             }
         );
     });
 }
 function getClankerSpeed(){
-    return Math.max(300, 5000 - (clankerJuiceLevel * 250));
+    return Math.max(200, 4000 - (clankerJuiceLevel * 300));
 }
 function startClankerLoop(){
     clearTimeout(window.clankerTimer);
     function attack(){
         if(clankerActive && clankers > 0){
             clicks += clankers;
+            for(let i=0;i<clankers;i++){
+                createRobotPopup(1);
+            }
             updateCounter();
             clankerAttack();
             saveGame();
@@ -385,6 +402,20 @@ function createPopup(value, isCrit){
         popup.remove();
     }, 800);
 }
+function createRobotPopup(value){
+    const popup = document.createElement("div");
+    popup.textContent = "+" + value;
+    popup.className = "popup";
+    popup.style.color = "#66ccff"
+    popup.style.textShadow = "2px 2px 0px #004466";
+    const rect = nemo.getBoundingClientRect();
+    popup.style.left = (rect.left + rect.width/2 + (Math.random()-0.5)*80) + "px";
+    popup.style.top = (rect.top + rect.height/2 + (Math.random()-0.5)*40) + "px";
+    document.body.appendChild(popup);
+    setTimeout(()=>{
+        popup.remove();
+    }, 800);
+}
 function createSpendPopup(amount){
     const popup = document.createElement("div");
     popup.textContent = "-" + amount;
@@ -398,7 +429,12 @@ function createSpendPopup(amount){
     }, 1000);
 }
 function updateShop(){
-    buyCursor.textContent = `Tiny Cursor (${cursorLevel} Owned) - ${cursorPrice}`;
+    if(cursorLevel >= maxCursorLevel){
+        buyCursor.textContent = `Tiny Cursor (${cursorLevel}/${maxCursorLevel}) - MAX`;
+    }
+    else{
+        buyCursor.textContent = `Tiny Cursor (${cursorLevel}/${maxCursorLevel}) - ${cursorPrice}`;
+    }
     if(clankers >= max_clankers){
         buyClanker.textContent = `Clanker (${clankers}/4) - MAX`;
     }
@@ -414,6 +450,28 @@ function updateShop(){
         buyClankerJuice.disabled = false;
         buyClankerJuice.style.opacity = "1";
     }
+}
+function updateCursorFollowers(){
+    document.querySelectorAll(".cursorFollower").forEach(f => f.remove());
+    for(let i=0;i<cursorLevel;i++){
+        const follower = document.createElement("img");
+        follower.src = "assets/attachments (1)/Telegram.png";
+        follower.className = "cursorFollower";
+        document.body.appendChild(follower);
+    }
+}
+function animateFollowers(){
+    if(game.style.display === "none"){
+        return;
+    }
+    const followers = document.querySelectorAll(".cursorFollower");
+    followers.forEach((follower,index)=>{
+        const angle = Date.now()/500 + (index * Math.PI*2 / followers.length);
+        const radius = 40;
+        follower.style.left = (mouseX + Math.cos(angle)*radius) + "px";
+        follower.style.top = (mouseY + Math.sin(angle)*radius) + "px";
+    });
+    requestAnimationFrame(animateFollowers);
 }
 function saveGame(){
     const saveData = {
@@ -482,6 +540,9 @@ buyCursor.addEventListener("click", ()=>{
     if(clicks < cursorPrice){
         return;
     }
+    if(cursorLevel >= maxCursorLevel){
+        return;
+    }
     clicks -= cursorPrice;
     createSpendPopup(cursorPrice);
     cursorLevel++;
@@ -491,6 +552,11 @@ buyCursor.addEventListener("click", ()=>{
     updateShop();
     saveGame();
 });
+document.addEventListener("mousemove",(e)=>{
+    mouseX = e.clientX
+    mouseY = e.clientY;
+})
+updateCursorFollowers();
 buyClanker.addEventListener("click", ()=>{
     if(clicks <clankerPrice){
         return;
@@ -522,8 +588,36 @@ buyClankerJuice.addEventListener("click", ()=>{
     updateShop();
     saveGame();
 });
+buyEnergyDrink.addEventListener("click", ()=>{
+    if(energyDrinkActive){
+        return;
+    }
+    if(clicks < 250){
+        return;
+    }
+    clicks -= 250;
+    createSpendPopup(250);
+    energyDrinkActive = true;
+    energyDrinkTime = 60;
+    energyDrinkUI.style.display = "block";
+    updateCounter();
+    saveGame();
+});
+setInterval(()=>{
+    if(!energyDrinkActive){
+        return;
+    }
+    energyDrinkTime--;
+    energyDrinkFill.style.transform = `scaleY(${energyDrinkTime / 60})`;
+    if(energyDrinkTime <= 0){
+        energyDrinkActive = false;
+        energyDrinkUI.style.display = "none";
+    }
+}, 1000);
 loadGame();
+updateCursorFollowers();
 positionClankers();
 startClankerLoop();
+animateFollowers();
 
 window.addEventListener("resize", positionClankers);
