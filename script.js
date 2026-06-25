@@ -133,7 +133,7 @@ function updateNemoSprite(){
     else if(clicks >= 5){
         nemo.src = "assets/attachments (2)/sprite (11).png";
     }
-}
+} 
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
@@ -160,7 +160,7 @@ function updateTitle(){
     }
 }
 function setWavyText(text){
-    comboTitle.innerHTML = "";
+    comboTitle.innerHTML = `<img class="comboIcon" src="assets/attachments (1)/Tinder.png">`;
     [...text].forEach((char, index)=>{
         const span = document.createElement("span");
         span.className = "waveLetter";
@@ -215,15 +215,15 @@ nemo.addEventListener("click", () => {
     else if(clickStreak >= 10){
         title = "FAST";
     }
-    const comboText = `<img id="comboIcon" src="assets/attachments (1)/Tinder.png"> ${title} x${clickStreak}`;
+    const comboText = `${title} x${clickStreak}`;
     comboNumber.textContent = "x" + clickStreak;
     if(title !== currentTitle){
         currentTitle = title;
         if(clickStreak >= 20){
-            setWavyText(`<img id="comboIcon" src="assets/attachments (1)/Tinder.png">` + title);
+            setWavyText(title);
         }
         else{
-            comboTitle.innerHTML = `<img id="comboIcon" src="assets/attachments (1)/Tinder.png">` + title;
+            comboTitle.innerHTML = `<img class="comboIcon" src="assets/attachments (1)/Tinder.png"> ${title}`;
         }
     }
     if(clickStreak >= 30){
@@ -250,7 +250,7 @@ nemo.addEventListener("click", () => {
     clearTimeout(window.streakTimer);
     window.streakTimer = setTimeout(() => {
         clickStreak = 0;
-        comboTitle.innerHTML = `<img id="comboIcon" src="assets/attachments (1)/Tinder.png"> Combo`;
+        comboTitle.innerHTML = `<img class="comboIcon" src="assets/attachments (1)/Tinder.png"> Combo`;
         comboNumber.textContent = "x0";
         currentTitle = "";
         streakCounter.style.color = "white";

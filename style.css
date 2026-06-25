@@ -441,8 +441,17 @@ button, img, #nemo{
 }
 
 #comboIcon{
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     image-rendering: pixelated;
     vertical-align: middle;
+    margin-right: 8px;
+}
+
+.comboIcon{
+    width: 40px;
+    height: 40px;
+    image-rendering: pixelated;
+    vertical-align: middle;
+    
 }
