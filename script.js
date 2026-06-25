@@ -621,3 +621,8 @@ startClankerLoop();
 animateFollowers();
 
 window.addEventListener("resize", positionClankers);
+
+window.resetSave = function(){
+    localStorage.removeItem("nemoSave");
+    localStorage.reload();
+}
