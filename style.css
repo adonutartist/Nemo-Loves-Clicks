@@ -571,3 +571,80 @@ button, img, #nemo{
     border-color: gold;
     box-shadow: 0 0 15px #a86f00;
 }
+
+.unlockCard{
+    position: fixed;
+    top: -400px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    padding: 20px;
+    background: #363636;
+    border: 5px solid white;
+    border-radius: 18px;
+    text-align: center;
+    transition: .6s;
+    z-index: 999999;
+}
+
+.unlockCard.show{
+    top: 30px;
+}
+
+.unlockCard img{
+    width: 160px;
+    image-rendering: pixelated;
+}
+
+.unlockTitle{
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.unlockName{
+    font-size: 1.8rem;
+    margin-top: 10px;
+}
+
+.unlockRarity{
+    font-size: 1.5rem;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.Common{
+    color: white;
+}
+
+.Rare{
+    color: #4da6ff;
+}
+
+.Epic{
+    color: #c05cff;
+}
+
+.Legendary{
+    color: gold;
+}
+
+.Mythic{
+    animation: rainbow .7s linear infinite;
+}
+
+.newUnlock{
+    animation: chestGlow .8s infinite;
+}
+
+@keyframes chestGlow{
+    0%{
+        filter: drop-shadow(0 0 5px gold);
+    }
+    50%{
+        filter: drop-shadow(0 0 25px gold);
+        transform: scale(1.08);
+    }
+    100%{
+        filter: drop-shadow(0 0 5px gold);
+    }
+}

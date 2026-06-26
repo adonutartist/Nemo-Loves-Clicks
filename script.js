@@ -27,32 +27,50 @@ const nemojis = [
     {
         name: "Happy Nemo",
         sprite: "assets/attachments (2)/sprite.png",
-        unlock: 0
+        src: "assets/attachments (2)/sprite.png",
+        unlock: 0,
+        rarity: "Common",
+        requirement: 0
     },
     {
         name: "Awkward Nemo",
         sprite: "assets/attachments (2)/sprite (11).png",
-        unlock: 5
+        src: "assets/attachments (2)/sprite (11).png",
+        unlock: 5,
+        rarity: "Common",
+        requirement: 5
     },
     {
         name: "Nervous Nemo",
         sprite: "assets/attachments (2)/sprite (16).png",
-        unlock: 10
+        src: "assets/attachments (2)/sprite (16).png",
+        unlock: 10,
+        rarity: "Rare",
+        requirement: 10
     },
     {
         name: "Too Happy Nemo",
         sprite: "assets/attachments (2)/sprite (25).png",
-        unlock: 20
+        src: "assets/attachments (2)/sprite (25).png",
+        unlock: 20,
+        rarity: "Epic",
+        requirement: 20
     },
     {
         name: "Krazy Happy Nemo",
         sprite: "assets/attachments (2)/sprite (24).png",
-        unlock: 30
+        src: "assets/attachments (2)/sprite (24).png",
+        unlock: 30,
+        rarity: "Legendary",
+        requirement: 30
     },
     {
         name: "You are wasting your time on Nemo",
         sprite: "assets/attachments (2)/sprite (15).png",
-        unlock: 40
+        src: "assets/attachments (2)/sprite (15).png",
+        unlock: 40,
+        rarity: "Mythic",
+        requirement: "40"
     }
 ];
 let mouseX = 0;
@@ -75,6 +93,9 @@ let clankerJuicePrice = 500;
 let clankerActive = false;
 let energyDrinkActive = false;
 let energyDrinkTime = 0;
+let unlockedNemojis = [0];
+let selectedNemoji = 0;
+let newCollectionUnlock = false;
 let equippedNemoji = null;
 let lastUnlockedNemoji = equippedNemoji;
 function nextScreen(){
@@ -175,6 +196,20 @@ function updateNemoSprite(){
         saveGame();
     }
     updateNemojiPage();
+}
+function checkNemojis(){
+    nemojis.forEach((emoji, index)=>{
+        if(clicks>=emoji.requirement && !unlockedNemojis.includes(index)){
+            unlockedNemojis.push(index);
+            selectedNemoji = index;
+            nemo.src = emoji.src;
+            createUnlockCard(emoji);
+            newCollectionUnlock=true;
+            updateChestGlow();
+            saveGame();
+            updateNemojis();
+        }
+    });
 } 
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
@@ -314,13 +349,46 @@ nemo.addEventListener("click", () => {
     updateCounter();
     saveGame();
     updateTitle();
-    updateNemoSprite();
+    checkNemojis();
     updateNemojiPage();
     createPopup(clickValue, isCrit);
     juiceClick();
     screenShake();
     createSparkBurst();
 });
+function updateChestGlow(){
+    if(newCollectionUnlock){
+        collectionButton.classList.add("newUnlock");
+    }
+    else{
+        collectionButton.classList.remove("newUnlock");
+    }
+}
+function createUnlockCard(emoji){
+    const card = document.createElement("div");
+    card.className = "unlockCard";
+    card.innerHTML = `
+        <div class="unlockTitle">
+        NEW NEMOJI
+        </div>
+        <img src="${emoji.src}">
+        <div class="unlockName">
+        ${emoji.name}
+        </div>
+        <div class="unlockRarity ${emoji.rarity}">
+        ${emoji.rarity}
+        </div>`;
+    document.body.appendChild(card);
+    setTimeout(()=>{
+        card.classList.add("show");
+    }, 50);
+    setTimeout(()=>{
+        card.classList.remove("show");
+        setTimeout(()=>{
+            card.remove();
+        }, 600);
+    }, 3000);
+}
 function createOra(){
     const ora = document.createElement("img");
     ora.src = "assets/attachments (4)/ora.png";
@@ -579,7 +647,7 @@ function saveGame(){
         saveText.style.opacity = "0";
     }, 500);
 }
-function loadGame(){
+function loadGame(){ 
     const saveData = JSON.parse(
         localStorage.getItem("nemoSave")
     );
@@ -632,6 +700,8 @@ foodButton.addEventListener("click", ()=>{
 collectionButton.addEventListener("click", ()=>{
     collectionWindow.style.display = "block";
     shopOverlay.style.display = "block";
+    newCollectionUnlock = false;
+    updateChestGlow();
 });
 nemojiTab.addEventListener("click", ()=>{
     nemojiPage.style.display = "block";
