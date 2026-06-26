@@ -202,12 +202,14 @@ function checkNemojis(){
         if(clicks>=emoji.requirement && !unlockedNemojis.includes(index)){
             unlockedNemojis.push(index);
             selectedNemoji = index;
+            equippedNemoji = emoji.src;
+            lastUnlockedNemoji = emoji.src;
             nemo.src = emoji.src;
             createUnlockCard(emoji);
             newCollectionUnlock=true;
             updateChestGlow();
             saveGame();
-            updateNemojis();
+            updateNemojiPage();
         }
     });
 } 
@@ -636,7 +638,8 @@ function saveGame(){
         clankerJuiceLevel: clankerJuiceLevel,
         clankerJuicePrice: clankerJuicePrice,
         equippedNemoji: equippedNemoji,
-        lastUnlockedNemoji: lastUnlockedNemoji
+        lastUnlockedNemoji: lastUnlockedNemoji,
+        unlockedNemojis: unlockedNemojis
     };
     localStorage.setItem(
         "nemoSave",
@@ -671,6 +674,7 @@ function loadGame(){
         clankerActive = true;
     }
     clankerJuicePrice = saveData.clankerJuicePrice || 500;
+    unlockedNemojis = saveData.unlockedNemojis || [0];
     equippedNemoji = saveData.equippedNemoji || null;
     lastUnlockedNemoji = saveData.lastUnlockedNemoji || equippedNemoji;
     if(equippedNemoji){
@@ -678,7 +682,7 @@ function loadGame(){
     }
     updateCounter();
     updateTitle();
-    updateNemoSprite();
+    
     updateShop();
     updateNemojiPage();
     updateAchievementPage();
