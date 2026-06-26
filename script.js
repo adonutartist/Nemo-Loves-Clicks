@@ -11,12 +11,50 @@ const buyCursor = document.getElementById("buyCursor");
 const buyClanker = document.getElementById("buyClanker");
 const buyClankerJuice = document.getElementById("buyClankerJuice");
 const foodButton = document.getElementById("foodButton");
+const collectionButton = document.getElementById("collectionButton");
+const collectionWindow = document.getElementById("collectionWindow");
+const nemojiPage = document.getElementById("nemojiPage");
+const achievementPage = document.getElementById("achievementPage");
+const nemojiTab = document.getElementById("nemojiTab");
+const achievementTab = document.getElementById("achievementTab");
 const foodShop = document.getElementById("foodShop");
 const energyDrinkUI = document.getElementById("energyDrinkUI");
 const energyDrinkFill = document.getElementById("energyDrinkFill");
 const buyEnergyDrink = document.getElementById("buyEnergyDrink");
 const shopOverlay = document.getElementById("shopOverlay");
 const max_clankers = 4;
+const nemojis = [
+    {
+        name: "Happy Nemo",
+        sprite: "assets/attachments (2)/sprite.png",
+        unlock: 0
+    },
+    {
+        name: "Awkward Nemo",
+        sprite: "assets/attachments (2)/sprite (11).png",
+        unlock: 5
+    },
+    {
+        name: "Nervous Nemo",
+        sprite: "assets/attachments (2)/sprite (16).png",
+        unlock: 10
+    },
+    {
+        name: "Too Happy Nemo",
+        sprite: "assets/attachments (2)/sprite (25).png",
+        unlock: 20
+    },
+    {
+        name: "Krazy Happy Nemo",
+        sprite: "assets/attachments (2)/sprite (24).png",
+        unlock: 30
+    },
+    {
+        name: "You are wasting your time on Nemo",
+        sprite: "assets/attachments (2)/sprite (15).png",
+        unlock: 40
+    }
+];
 let mouseX = 0;
 let mouseY = 0;
 let current = 0;
@@ -37,6 +75,8 @@ let clankerJuicePrice = 500;
 let clankerActive = false;
 let energyDrinkActive = false;
 let energyDrinkTime = 0;
+let equippedNemoji = null;
+let lastUnlockedNemoji = equippedNemoji;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -119,23 +159,22 @@ function unlockAchievement(name){
     }
     achievements.push(name);
     showAchievement(name);
+    updateAchievementPage();
 }
 function updateNemoSprite(){
-    if(clicks >= 40){
-        nemo.src = "assets/attachments (2)/sprite (15).png";
+    let newestUnlock = nemojis[0].sprite;
+    for(const nemoji of nemojis){
+        if(clicks >= nemoji.unlock){
+            newestUnlock = nemoji.sprite;
+        }
     }
-    else if(clicks >= 30){
-        nemo.src = "assets/attachments (2)/sprite (24).png";
+    if(newestUnlock !== lastUnlockedNemoji){
+        lastUnlockedNemoji = newestUnlock;
+        equippedNemoji = newestUnlock;
+        nemo.src = newestUnlock;
+        saveGame();
     }
-    else if(clicks >= 20){
-        nemo.src = "assets/attachments (2)/sprite (25).png";
-    }
-    else if(clicks >= 10){
-        nemo.src = "assets/attachments (2)/sprite (16).png";
-    }
-    else if(clicks >= 5){
-        nemo.src = "assets/attachments (2)/sprite (11).png";
-    }
+    updateNemojiPage();
 } 
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
@@ -171,7 +210,7 @@ function setWavyText(text){
         span.style.animationDelay = (index * 0.08) + "s";
         comboTitle.appendChild(span);
     });
-}
+} 
 function showAchievement(text){
     achievementToast.textContent = "🏆 " + text;
     achievementToast.style.right = "20px";
@@ -276,6 +315,7 @@ nemo.addEventListener("click", () => {
     saveGame();
     updateTitle();
     updateNemoSprite();
+    updateNemojiPage();
     createPopup(clickValue, isCrit);
     juiceClick();
     screenShake();
@@ -478,6 +518,44 @@ function animateFollowers(){
     });
     requestAnimationFrame(animateFollowers);
 }
+function updateNemojiPage(){
+    nemojiPage.innerHTML = "";
+    nemojis.forEach(nemoji=>{
+        if(clicks < nemoji.unlock){
+            return;
+        }
+        const card = document.createElement("div");
+        card.className = "nemojiCard";
+        card.innerHTML = `<img src="${nemoji.sprite}">
+                          <div>
+                            <b>${nemoji.name}</b><br>
+                            Unlock: ${nemoji.unlock} Clicks
+                          </div>`;
+        if(equippedNemoji === nemoji.sprite){
+            card.classList.add("equipped");
+        }
+        card.onclick = ()=>{
+            equippedNemoji = nemoji.sprite;
+            nemo.src = equippedNemoji;
+            updateNemojiPage();
+            saveGame();
+        };
+        nemojiPage.appendChild(card);
+    });
+}
+function updateAchievementPage(){
+    achievementPage.innerHTML = "";
+    achievements.forEach(name=>{
+        const card = document.createElement("div");
+        card.className = "nemojiCard";
+        card.innerHTML = `
+            <div style="font-size:2rem;">🏆</div>
+            <div>
+                <b>${name}</b>
+            </div>`;
+        achievementPage.appendChild(card);
+    });
+}
 function saveGame(){
     const saveData = {
         clicks: clicks,
@@ -488,7 +566,9 @@ function saveGame(){
         clankers: clankers,
         clankerPrice: clankerPrice,
         clankerJuiceLevel: clankerJuiceLevel,
-        clankerJuicePrice: clankerJuicePrice
+        clankerJuicePrice: clankerJuicePrice,
+        equippedNemoji: equippedNemoji,
+        lastUnlockedNemoji: lastUnlockedNemoji
     };
     localStorage.setItem(
         "nemoSave",
@@ -523,10 +603,17 @@ function loadGame(){
         clankerActive = true;
     }
     clankerJuicePrice = saveData.clankerJuicePrice || 500;
+    equippedNemoji = saveData.equippedNemoji || null;
+    lastUnlockedNemoji = saveData.lastUnlockedNemoji || equippedNemoji;
+    if(equippedNemoji){
+        nemo.src = equippedNemoji;
+    }
     updateCounter();
     updateTitle();
     updateNemoSprite();
     updateShop();
+    updateNemojiPage();
+    updateAchievementPage();
 }
 shopButton.addEventListener("click", ()=>{
     shop.style.display = "block";
@@ -536,10 +623,23 @@ shopOverlay.addEventListener("click", ()=>{
     shop.style.display = "none";
     foodShop.style.display = "none";
     shopOverlay.style.display = "none";
+    collectionWindow.style.display = "none";
 });
 foodButton.addEventListener("click", ()=>{
     foodShop.style.display = "block";
     shopOverlay.style.display = "block";
+});
+collectionButton.addEventListener("click", ()=>{
+    collectionWindow.style.display = "block";
+    shopOverlay.style.display = "block";
+});
+nemojiTab.addEventListener("click", ()=>{
+    nemojiPage.style.display = "block";
+    achievementPage.style.display = "none";
+});
+achievementTab.addEventListener("click", ()=>{
+    achievementPage.style.display = "block";
+    nemojiPage.style.display = "none";
 });
 buyCursor.addEventListener("click", ()=>{
     if(clicks < cursorPrice){

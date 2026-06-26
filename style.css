@@ -487,3 +487,87 @@ button, img, #nemo{
     font-size: 1.6rem;
     max-width: 300px;
 }
+
+#collectionButton{
+    position: fixed;
+    left: 20px;
+    top: 240px;
+    width: 96px;
+    height: 96px;
+    cursor: pointer;
+    transition: .15s;
+    z-index: 1000;
+}
+
+#collectionButton:hover{
+    transform: scale(1.1);
+}
+
+#collectionButton:active{
+    transform: scale(.95);
+}
+
+#collectionWindow{
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    height: 520px;
+    background: #363636;
+    border: 4px solid white;
+    border-radius: 15px;
+    padding: 20px;
+    z-index: 9999;
+}
+
+#collectionTabs{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#collectionTabs button{
+    flex: 1;
+    font-family: "Determination";
+    font-size: 1.4rem;
+    background: #4c4c4c;
+    color: white;
+    border: 3px solid white;
+    padding: 10px;
+}
+
+#nemojiPage,
+#achievementPage{
+    overflow-y: auto;
+    height: 420px;
+    padding: 8px;
+    overflow-x: hidden;
+}
+
+.nemojiCard{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 3px solid white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: .15s;
+}
+
+.nemojiCard:hover{
+    transform: scale(1.02);
+}
+
+.nemojiCard img{
+    width: 40px;
+    image-rendering: pixelated;
+}
+
+.equipped{
+    border-color: gold;
+    box-shadow: 0 0 15px #a86f00;
+}
