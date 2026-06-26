@@ -574,26 +574,51 @@ button, img, #nemo{
 
 .unlockCard{
     position: fixed;
-    top: -400px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 320px;
+    transform: translate(-50%, -50%) scale(.6);
+    width: 330px;
     padding: 20px;
     background: #363636;
     border: 5px solid white;
     border-radius: 18px;
+    color: white;
+    opacity: 0;
     text-align: center;
-    transition: .6s;
+    transition: transform .5s,
+                opacity .5s;
+    overflow: hidden;
     z-index: 999999;
 }
 
-.unlockCard.show{
-    top: 30px;
+.unlockCard::before{
+    content: "";
+    position: absolute;
+    top: -40%;
+    left: -140%;
+    width: 60%;
+    height: 220%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,.8), transparent);
+    transform: rotate(25deg);
+    animation: unlockSweep 2s infinite;
 }
 
-.unlockCard img{
-    width: 160px;
+.unlockCard.show{
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.unlockTitle{
+    font-size: 1.8rem;
+    color: gold;
+    margin-bottom: 15px;
+    letter-spacing: 3px;
+}
+
+.unlockImage{
+    width: 170px;
     image-rendering: pixelated;
+    margin-bottom: 15px;
 }
 
 .unlockTitle{
@@ -602,34 +627,42 @@ button, img, #nemo{
 }
 
 .unlockName{
-    font-size: 1.8rem;
-    margin-top: 10px;
+    font-size: 1.6rem;
+    margin-top: 12px;
 }
 
 .unlockRarity{
-    font-size: 1.5rem;
-    margin-top: 8px;
+    font-size: 1.2rem;
     font-weight: bold;
 }
 
-.Common{
+@keyframes unlockSweep{
+    from{
+        left: -140%;
+    }
+    to{
+        left: 170%;
+    }
+}
+
+.rarity-common{
     color: white;
 }
 
-.Rare{
-    color: #4da6ff;
+.rarity-rare{
+    color: #4cb6ff;
 }
 
-.Epic{
-    color: #c05cff;
+.rarity-epic{
+    color: #cf3cff;
 }
 
-.Legendary{
+.rarity-legendary{
     color: gold;
 }
 
-.Mythic{
-    animation: rainbow .7s linear infinite;
+.rarity-mythic{
+    color: #ff3030;
 }
 
 .newUnlock{
@@ -648,3 +681,4 @@ button, img, #nemo{
         filter: drop-shadow(0 0 5px gold);
     }
 }
+

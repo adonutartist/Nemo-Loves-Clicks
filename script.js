@@ -370,20 +370,16 @@ function createUnlockCard(emoji){
     const card = document.createElement("div");
     card.className = "unlockCard";
     card.innerHTML = `
-        <div class="unlockTitle">
-        NEW NEMOJI
-        </div>
-        <img src="${emoji.src}">
-        <div class="unlockName">
-        ${emoji.name}
-        </div>
-        <div class="unlockRarity ${emoji.rarity}">
-        ${emoji.rarity}
+        <div class="unlockTitle">NEW NEMOJI!</div>
+        <img  class="unlockImage" src="${emoji.src}">
+        <div class="unlockName">${emoji.name}</div>
+        <div class="unlockRarity rarity-${emoji.rarity.toLowerCase()}">
+            ${emoji.rarity}
         </div>`;
     document.body.appendChild(card);
-    setTimeout(()=>{
+    requestAnimationFrame(()=>{
         card.classList.add("show");
-    }, 50);
+    });
     setTimeout(()=>{
         card.classList.remove("show");
         setTimeout(()=>{
