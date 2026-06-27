@@ -636,8 +636,8 @@ function clankerAttack(){
     const targetRect = bossFight
         ? bossBody.getBoundingClientRect()
         : nemo.getBoundingClientRect();
-    const nemoX = targetRect.left + nemoRect.width / 2;
-    const nemoY = targetRect.top + nemoRect.height / 2;
+    const nemoX = targetRect.left + targetRect.width / 2;
+    const nemoY = targetRect.top + targetRect.height / 2;
     clankerSFX.currentTime = 0;
     clankerSFX.play();
     document.querySelectorAll(".clanker").forEach((clanker)=>{
