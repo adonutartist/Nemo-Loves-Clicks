@@ -32,6 +32,36 @@ const toggleCard = document.getElementById("toggleCard");
 const musicSlider = document.getElementById("musicSlider");
 const hpFill = document.getElementById("hpFill");
 const hpText = document.getElementById("hpText");
+const bossOverlay = document.getElementById("bossOverlay");
+const bossBody = document.getElementById("bossBody");
+const bossFace = document.getElementById("bossFace");
+const bossHPFill = document.getElementById("bossHPFill");
+const bossHPText = document.getElementById("bossHPText");
+const sansFacesPhase1 = [
+    "assets/phase 1 faces/tile000.png",
+    "assets/phase 1 faces/tile001.png",
+    "assets/phase 1 faces/tile003.png",
+    "assets/phase 1 faces/tile004.png",
+    "assets/phase 1 faces/tile005.png",
+    "assets/phase 1 faces/tile006.png",
+    "assets/phase 1 faces/tile007.png"
+];
+const sansFacesPhase2 = [
+    "assets/phase 2 faces/tile000.png",
+    "assets/phase 2 faces/tile001.png",
+    "assets/phase 2 faces/tile002.png",
+    "assets/phase 2 faces/tile003.png",
+    "assets/phase 2 faces/tile004.png",
+    "assets/phase 2 faces/tile005.png",
+    "assets/phase 2 faces/tile006.png",
+    "assets/phase 2 faces/tile007.png"
+];
+const swingFrames = [
+    "assets/attachments (3)/down.png",
+    "assets/attachments (3)/left.png",
+    "assets/attachments (3)/up.png",
+    "assets/attachments (3)/right.png",
+];
 const bgMusic = new Audio("assets/attachments (5)/Bgmusic.wav");
 bgMusic.loop = true;
 bgMusic.volume = 0.05;
@@ -48,6 +78,9 @@ const unlockSFX = new Audio("assets/attachments (5)/Newnemoji.wav");
 unlockSFX.volume = 0.9;
 const oraSFX = new Audio("assets/attachments (5)/oraora.mp3");
 oraSFX.volume = 0.8;
+const bossMusic = new Audio("assets/attachments (5)/Boss.mp3");
+bossMusic.loop = true;
+bossMusic.volume = .45;
 const max_clankers = 4;
 const nemojis = [
     {
@@ -132,6 +165,12 @@ let cardSFXEnabled = true;
 let currentNemoji = 0;
 let maxHP = 100;
 let hp = maxHP;
+let bossFight = false;
+let bossPhase = 1;
+let bossHP = 500;
+let bossMaxHP = 500;
+let bossClicks = 0;
+let sansUnlocked = false;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -246,10 +285,66 @@ function updateHP(){
         hpFill.style.background = "#ff4545";
     }
 }
+function updateBossHP(){
+    bossHPFill.style.width = (bossHP/bossMaxHP*100)+"%";
+    bossHPText.textContent = bossHP+" / "+bossMaxHP;
+}
+function startSansBattle(){
+    document.querySelector("#game h1").style.display="none";
+    document.getElementById("hpContainer").style.display="none";
+    nemo.style.visibility="hidden";
+    bossFight =true;
+    bossPhase = 1;
+    bossHP = 500;
+    bossMaxHP = 500;
+    bossClicks = 0;
+    updateBossHP();
+    bossOverlay.style.display = "flex";
+    bossBody.src="assets/attachments (3)/phase1.png"
+    bossFace.src=sansFacesPhase1[0];
+    bgMusic.pause();
+    shopMusic.pause();
+    bossMusic.currentTime = 0;
+    bossMusic.play();
+    createUnlockCard({
+        name: "SPECIAL ENCOUNTER",
+        rarity: "BOSS",
+        src: "assets/attachments (3)/phase1.png"
+    });
+}
+function updateSansFace(){
+    const percent = bossHP / bossMaxHP;
+    let index = 0;
+    if(percent<0.9) index=1;
+    if(percent<0.8) index=2;
+    if(percent<0.7) index=3;
+    if(percent<0.6) index=4;
+    if(percent<0.45) index=5;
+    if(percent<0.25) index=6;
+    if(bossPhase==1){
+        bossFace.src=sansFacesPhase1[index];
+    }else{
+        bossFace.src=sansFacesPhase2[index];
+    }
+}
+function bossPhase2(){
+    bossFight=false;
+    bossMusic.pause();
+    alert("Phase 2 coming next.")
+}
+function sansSwing(){
+    let i=0;
+    const anim=setInterval(()=>{
+        bossBody.src=swingFrames[i];
+        i++;
+        if(i>=swingFrames.length){
+            clearInterval(anim);
+        }
+    },70);
+}
 function evolveNemoji(){
     if(currentNemoji>=nemojis.length-1){
-        hp = maxHP;
-        updateHP();
+        startSansBattle();
         return;
     }
     currentNemoji++;
@@ -314,6 +409,25 @@ function showAchievement(text){
         achievementToast.style.right = "-500px";
     }, 3000);
 }
+bossBody.addEventListener("click",()=>{
+    if(!bossFight) return;
+    let clickValue = 1 + bonusClicks;
+    if(Math.random()<0.05){
+        clickValue*=10;
+        createPopup(clickValue,true);
+        critSFX.currentTime=0;
+        critSFX.play();
+    }else{
+        createPopup(clickValue,false);
+    }
+    bossHP-=clickValue;
+    bossClicks+=clickValue;
+    updateBossHP();
+    updateSansFace();
+    if(bossHP<=0){
+        bossPhase2();
+    }
+});
 nemo.addEventListener("click", () => {
     let multiplier = 1;
     if(clickStreak >= 100){
@@ -341,10 +455,24 @@ nemo.addEventListener("click", () => {
         isCrit = true;
     }
     clicks += clickValue;
-    hp--;
-    updateHP();
-    if(hp<=0){
-        evolveNemoji();
+    if(bossFight){
+        bossHP-=clickValue;
+        bossClicks+=clickValue;
+        updateBossHP();
+        createPopup(clickValue,isCrit);
+        updateSansFace();
+        if(bossHP<=0){
+            bossHP=0;
+            updateBossHP();
+            bossPhase2();
+        }
+    }
+    if(!bossFight){
+        hp--;
+        updateHP();
+        if(hp<=0){
+            evolveNemoji();
+        }
     }
     multiplierDisplay.textContent = "x" + multiplier + " Multiplier";
     clickStreak++;
@@ -505,9 +633,11 @@ function juiceClick(){
     }, 80);
 }
 function clankerAttack(){
-    const nemoRect = nemo.getBoundingClientRect();
-    const nemoX = nemoRect.left + nemoRect.width / 2;
-    const nemoY = nemoRect.top + nemoRect.height / 2;
+    const targetRect = bossFight
+        ? bossBody.getBoundingClientRect()
+        : nemo.getBoundingClientRect();
+    const nemoX = targetRect.left + nemoRect.width / 2;
+    const nemoY = targetRect.top + nemoRect.height / 2;
     clankerSFX.currentTime = 0;
     clankerSFX.play();
     document.querySelectorAll(".clanker").forEach((clanker)=>{
@@ -548,7 +678,19 @@ function startClankerLoop(){
     clearTimeout(window.clankerTimer);
     function attack(){
         if(clankerActive && clankers > 0){
-            clicks += clankers;
+            if(bossFight){
+                bossHP-=clankers;
+                if(bossHP<0)
+                    bossHP=0;
+                updateBossHP();
+                updateSansFace();
+                if(bossHP===0){
+                    bossPhase2();
+                }
+            }else{
+                clicks+=clankers;
+                updateCounter();
+            }
             hp -= clankers;
             for(let i=0;i<clankers;i++){
                 createRobotPopup(1);
@@ -577,7 +719,12 @@ function createPopup(value, isCrit){
     }
     popup.style.scale = 0.8 + Math.random()*0.6;
     popup.className = "popup";
-    const rect = nemo.getBoundingClientRect();
+    let rect;
+    if(bossFight){
+        rect=bossBody.getBoundingClientRect();
+    }else{
+        rect=nemo.getBoundingClientRect();
+    }
     const randomX = (Math.random() - 0.5) * 100;
     const randomY = (Math.random() - 0.5) * 60;
     const randomRotation = (Math.random() - 0.5) * 30;
@@ -661,8 +808,8 @@ function animateFollowers(){
 }
 function updateNemojiPage(){
     nemojiPage.innerHTML = "";
-    nemojis.forEach(nemoji=>{
-        if(clicks < nemoji.unlock){
+    nemojis.forEach((nemoji,index)=>{
+        if(!unlockedNemojis.includes(index)){
             return;
         }
         const card = document.createElement("div");

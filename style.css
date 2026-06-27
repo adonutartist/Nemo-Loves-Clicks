@@ -184,7 +184,7 @@ button, img, #nemo{
     animation: popupFloat 2s forwards;
     text-shadow: 2px 2px 0px #a86f00;
     transform: translate(-50%, -50%);
-    z-index: 20;
+    z-index: 20000;
 }
 
 @keyframes shake{
@@ -760,4 +760,92 @@ button, img, #nemo{
     color: white;
     font-size: 1.2rem;
     text-shadow: 2px 2px rgb(73, 72, 72);
+}
+
+#bossOverlay{
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 5000;
+    pointer-events: auto;
+}
+
+#bossName{
+    font-size: 4rem;
+    margin-bottom: 20px;
+    text-shadow: 4px 4px rgb(101, 101, 101);
+}
+
+#bossContainer{
+    position: relative;
+    width: 240px;
+    height: 300px;
+    pointer-events: none;
+}
+
+#bossBody{
+    position: absolute;
+    width: 100%;
+    image-rendering: pixelated;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+#bossFace{
+    position: absolute;
+    width: 140px;
+    left: 49px;
+    top: 7px;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+#bossHPContainer{
+    width: 520px;
+    height: 36px;
+    border: 4px solid white;
+    background: #363636;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+#bossHPFill{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #ff4444;
+    transition: .15s;
+}
+
+#bossHPText{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: 2px 2px rgb(104, 104, 104);
+}
+
+.bossFade{
+    animation: bossFade .6s forwards;
+}
+
+@keyframes bossFade{
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0;
+    }
 }
