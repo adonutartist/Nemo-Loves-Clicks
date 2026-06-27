@@ -22,6 +22,22 @@ const energyDrinkUI = document.getElementById("energyDrinkUI");
 const energyDrinkFill = document.getElementById("energyDrinkFill");
 const buyEnergyDrink = document.getElementById("buyEnergyDrink");
 const shopOverlay = document.getElementById("shopOverlay");
+const bgMusic = new Audio("assets/attachments (5)/Bgmusic.wav");
+bgMusic.loop = true;
+bgMusic.volume = 0.05;
+const shopMusic = new Audio("assets/attachments (5)/shopbg.wav");
+shopMusic.loop = true;
+shopMusic.volume = 0.5;
+const achievementSFX = new Audio("assets/attachments (5)/Achievement.wav");
+achievementSFX.volume = 0.9;
+const critSFX = new Audio("assets/attachments (5)/Crit.mp3");
+critSFX.volume = 1;
+const clankerSFX = new Audio("assets/attachments (5)/Clankerpoke.mp3");
+clankerSFX.volume = 0.8;
+const unlockSFX = new Audio("assets/attachments (5)/Newnemoji.wav");
+unlockSFX.volume = 0.9;
+const oraSFX = new Audio("assets/attachments (5)/oraora.mp3");
+oraSFX.volume = 0.8;
 const max_clankers = 4;
 const nemojis = [
     {
@@ -174,6 +190,23 @@ function positionClankers(){
             : `translate(-50%, -50%) rotate(${pos.rotation}deg)`;
     });
 }
+function updateMusic(){
+    const shopOpen = shop.style.display === "block" ||
+                     foodShop.style.display === "block" ||
+                     collectionWindow.style.display === "block";
+    if (shopOpen){
+        if(!shopMusic.paused) return;
+        bgMusic.pause();
+        shopMusic.currentTime = 0;
+        shopMusic.play();
+    }
+    else{
+        if(!bgMusic.paused) return;
+        shopMusic.pause();
+        shopMusic.currentTime = 0;
+        bgMusic.play();
+    }
+}
 function unlockAchievement(name){
     if(achievements.includes(name)){
         return;
@@ -249,6 +282,8 @@ function setWavyText(text){
     });
 } 
 function showAchievement(text){
+    achievementSFX.currentTime = 0;
+    achievementSFX.play();
     achievementToast.textContent = "🏆 " + text;
     achievementToast.style.right = "20px";
     setTimeout(()=>{
@@ -367,6 +402,8 @@ function updateChestGlow(){
     }
 }
 function createUnlockCard(emoji){
+    unlockSFX.currentTime = 0;
+    unlockSFX.play();
     const card = document.createElement("div");
     card.className = "unlockCard";
     card.innerHTML = `
@@ -390,6 +427,9 @@ function createUnlockCard(emoji){
 function createOra(){
     const ora = document.createElement("img");
     ora.src = "assets/attachments (4)/ora.png";
+    const SFX = oraSFX.cloneNode();
+    SFX.volume = oraSFX.volume;
+    SFX.play();
     ora.className = "ora";
     const rect = nemo.getBoundingClientRect();
     const angle = Math.random() * Math.PI * 2;
@@ -439,6 +479,8 @@ function clankerAttack(){
     const nemoRect = nemo.getBoundingClientRect();
     const nemoX = nemoRect.left + nemoRect.width / 2;
     const nemoY = nemoRect.top + nemoRect.height / 2;
+    clankerSFX.currentTime = 0;
+    clankerSFX.play();
     document.querySelectorAll(".clanker").forEach((clanker)=>{
         const clankerRect = clanker.getBoundingClientRect();
         const clankerX = clankerRect.left + clankerRect.width / 2;
@@ -493,6 +535,8 @@ function startClankerLoop(){
 function createPopup(value, isCrit){
     const popup = document.createElement("div");
     if(isCrit){
+        critSFX.currentTime = 0;
+        critSFX.play();
         popup.textContent = "CRIT! +" + value;
         popup.style.fontSize = "3rem";
         popup.style.color = "red";
@@ -686,20 +730,24 @@ function loadGame(){
 shopButton.addEventListener("click", ()=>{
     shop.style.display = "block";
     shopOverlay.style.display = "block";
+    updateMusic();
 });
 shopOverlay.addEventListener("click", ()=>{
     shop.style.display = "none";
     foodShop.style.display = "none";
     shopOverlay.style.display = "none";
     collectionWindow.style.display = "none";
+    updateMusic();
 });
 foodButton.addEventListener("click", ()=>{
     foodShop.style.display = "block";
     shopOverlay.style.display = "block";
+    updateMusic();
 });
 collectionButton.addEventListener("click", ()=>{
     collectionWindow.style.display = "block";
     shopOverlay.style.display = "block";
+    updateMusic();
     newCollectionUnlock = false;
     updateChestGlow();
 });
@@ -793,6 +841,12 @@ loadGame();
 updateCursorFollowers();
 
 animateFollowers();
+
+document.addEventListener("click", ()=>{
+    bgMusic.play();
+},{
+    once: true
+});
 
 window.addEventListener("resize", positionClankers);
 
