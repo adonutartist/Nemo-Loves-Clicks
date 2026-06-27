@@ -22,6 +22,14 @@ const energyDrinkUI = document.getElementById("energyDrinkUI");
 const energyDrinkFill = document.getElementById("energyDrinkFill");
 const buyEnergyDrink = document.getElementById("buyEnergyDrink");
 const shopOverlay = document.getElementById("shopOverlay");
+const audioButton = document.getElementById("audioButton");
+const audioWindow = document.getElementById("audioWindow");
+const toggleCrit = document.getElementById("toggleCrit");
+const toggleOra = document.getElementById("toggleOra");
+const toggleClanker = document.getElementById("toggleClanker");
+const toggleAchievement = document.getElementById("toggleAchievement");
+const toggleCard = document.getElementById("toggleCard");
+const musicSlider = document.getElementById("musicSlider");
 const bgMusic = new Audio("assets/attachments (5)/Bgmusic.wav");
 bgMusic.loop = true;
 bgMusic.volume = 0.05;
@@ -114,6 +122,11 @@ let selectedNemoji = 0;
 let newCollectionUnlock = false;
 let equippedNemoji = null;
 let lastUnlockedNemoji = equippedNemoji;
+let critSFXEnabled = true;
+let oraSFXEnabled = true;
+let clankerSFXEnabled = true;
+let achievementSFXEnabled = true;
+let cardSFXEnabled = true;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -727,6 +740,11 @@ function loadGame(){
     updateNemojiPage();
     updateAchievementPage();
 }
+toggleCrit.onchange=()=>critSFXEnabled=toggleCrit.checked;
+toggleOra.onchange=()=>oraSFXEnabled=toggleOra.checked;
+toggleClanker.onchange=()=>clankerSFXEnabled=toggleClanker.checked;
+toggleAchievement.onchange=()=>achievementSFXEnabled=toggleAchievement.checked;
+toggleCard.onchange=()=>cardSFXEnabled=toggleCard.checked;
 shopButton.addEventListener("click", ()=>{
     shop.style.display = "block";
     shopOverlay.style.display = "block";
@@ -737,6 +755,7 @@ shopOverlay.addEventListener("click", ()=>{
     foodShop.style.display = "none";
     shopOverlay.style.display = "none";
     collectionWindow.style.display = "none";
+    audioWindow.style.display = "none";
     updateMusic();
 });
 foodButton.addEventListener("click", ()=>{
@@ -750,6 +769,15 @@ collectionButton.addEventListener("click", ()=>{
     updateMusic();
     newCollectionUnlock = false;
     updateChestGlow();
+});
+audioButton.addEventListener("click",()=>{
+    audioWindow.style.display = "block";
+    shopOverlay.style.display = "block";
+    updateMusic();
+});
+musicSlider.addEventListener("input",()=>{
+    bgMusic.volume = musicSlider.value;
+    shopMusic.volume = musicSlider.value;
 });
 nemojiTab.addEventListener("click", ()=>{
     nemojiPage.style.display = "block";

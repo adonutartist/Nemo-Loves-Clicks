@@ -682,3 +682,50 @@ button, img, #nemo{
     }
 }
 
+#audioButton{
+    position: fixed;
+    left: 20px;
+    top: 350px;
+    width: 96px;
+    height: 96px;
+    cursor: pointer;
+    transition: .15s;
+    z-index: 1000;
+}
+
+#audioButton:hover{
+    transform: scale(1.1);
+}
+
+#audioButton:active{
+    transform: scale(.95);
+}
+
+#audioWindow{
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    background: #363636;
+    border: 4px solid white;
+    border-radius: 15px;
+    padding: 25px;
+    z-index: 9999;
+}
+
+.audioRow{
+    margin: 15px 0;
+    font-size: 1.3rem;
+}
+
+.audioRow input{
+    transform: scale(1.4);
+    margin-right: 12px;
+}
+
+#musicSlider{
+    width: 100%;
+    margin-top: 20px;
+}
