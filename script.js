@@ -30,6 +30,8 @@ const toggleClanker = document.getElementById("toggleClanker");
 const toggleAchievement = document.getElementById("toggleAchievement");
 const toggleCard = document.getElementById("toggleCard");
 const musicSlider = document.getElementById("musicSlider");
+const hpFill = document.getElementById("hpFill");
+const hpText = document.getElementById("hpText");
 const bgMusic = new Audio("assets/attachments (5)/Bgmusic.wav");
 bgMusic.loop = true;
 bgMusic.volume = 0.05;
@@ -127,6 +129,9 @@ let oraSFXEnabled = true;
 let clankerSFXEnabled = true;
 let achievementSFXEnabled = true;
 let cardSFXEnabled = true;
+let currentNemoji = 0;
+let maxHP = 100;
+let hp = maxHP;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -228,36 +233,42 @@ function unlockAchievement(name){
     showAchievement(name);
     updateAchievementPage();
 }
-function updateNemoSprite(){
-    let newestUnlock = nemojis[0].sprite;
-    for(const nemoji of nemojis){
-        if(clicks >= nemoji.unlock){
-            newestUnlock = nemoji.sprite;
-        }
+function updateHP(){
+    hpFill.style.width = (hp/maxHP*100)+"%";
+    hpText.textContent = hp+" / "+maxHP;
+    if(hp>60){
+        hpFill.style.background = "#55ff55"
     }
-    if(newestUnlock !== lastUnlockedNemoji){
-        lastUnlockedNemoji = newestUnlock;
-        equippedNemoji = newestUnlock;
-        nemo.src = newestUnlock;
-        saveGame();
+    else if(hp>30){
+        hpFill.style.background = "#ffd83d"
     }
+    else{
+        hpFill.style.background = "#ff4545";
+    }
+}
+function evolveNemoji(){
+    if(currentNemoji>=nemojis.length-1){
+        hp = maxHP;
+        updateHP();
+        return;
+    }
+    currentNemoji++;
+    unlockedNemojis.push(currentNemoji);
+    equippedNemoji = nemojis[currentNemoji].sprite;
+    nemo.src = equippedNemoji;
+    createUnlockCard(nemojis[currentNemoji]);
+    newCollectionUnlock = true;
+    updateChestGlow();
     updateNemojiPage();
+    hp=maxHP;
+    saveGame();
+    updateHP();
+}
+function updateNemoSprite(){
+    nemo.src=equippedNemoji||nemojis[0].sprite;
 }
 function checkNemojis(){
-    nemojis.forEach((emoji, index)=>{
-        if(clicks>=emoji.requirement && !unlockedNemojis.includes(index)){
-            unlockedNemojis.push(index);
-            selectedNemoji = index;
-            equippedNemoji = emoji.src;
-            lastUnlockedNemoji = emoji.src;
-            nemo.src = emoji.src;
-            createUnlockCard(emoji);
-            newCollectionUnlock=true;
-            updateChestGlow();
-            saveGame();
-            updateNemojiPage();
-        }
-    });
+    
 } 
 function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
@@ -330,6 +341,11 @@ nemo.addEventListener("click", () => {
         isCrit = true;
     }
     clicks += clickValue;
+    hp--;
+    updateHP();
+    if(hp<=0){
+        evolveNemoji();
+    }
     multiplierDisplay.textContent = "x" + multiplier + " Multiplier";
     clickStreak++;
     let title = "Combo";
@@ -399,7 +415,7 @@ nemo.addEventListener("click", () => {
     updateCounter();
     saveGame();
     updateTitle();
-    checkNemojis();
+    
     updateNemojiPage();
     createPopup(clickValue, isCrit);
     juiceClick();
@@ -533,9 +549,11 @@ function startClankerLoop(){
     function attack(){
         if(clankerActive && clankers > 0){
             clicks += clankers;
+            hp -= clankers;
             for(let i=0;i<clankers;i++){
                 createRobotPopup(1);
             }
+            updateHP();
             createSparkBurst();
             updateCounter();
             clankerAttack();
@@ -692,6 +710,9 @@ function saveGame(){
         clankerJuicePrice: clankerJuicePrice,
         equippedNemoji: equippedNemoji,
         lastUnlockedNemoji: lastUnlockedNemoji,
+        unlockedNemojis: unlockedNemojis,
+        currentNemoji: currentNemoji,
+        hp: hp,
         unlockedNemojis: unlockedNemojis
     };
     localStorage.setItem(
@@ -730,6 +751,9 @@ function loadGame(){
     unlockedNemojis = saveData.unlockedNemojis || [0];
     equippedNemoji = saveData.equippedNemoji || null;
     lastUnlockedNemoji = saveData.lastUnlockedNemoji || equippedNemoji;
+    currentNemoji = saveData.currentNemoji||0;
+    hp = saveData.hp??100;
+    unlockedNemojis = saveData.unlockedNemojis||[0];
     if(equippedNemoji){
         nemo.src = equippedNemoji;
     }
@@ -738,6 +762,7 @@ function loadGame(){
     
     updateShop();
     updateNemojiPage();
+    updateHP();
     updateAchievementPage();
 }
 toggleCrit.onchange=()=>critSFXEnabled=toggleCrit.checked;

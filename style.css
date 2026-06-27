@@ -729,3 +729,35 @@ button, img, #nemo{
     width: 100%;
     margin-top: 20px;
 }
+
+#hpContainer{
+    width: 340px;
+    height: 28px;
+    border: 3px solid white;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+    background: #363636;
+}
+
+#hpFill{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #5fff66, #1fb72a);
+    transition: .2s;
+}
+
+#hpText{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.2rem;
+    text-shadow: 2px 2px rgb(73, 72, 72);
+}
