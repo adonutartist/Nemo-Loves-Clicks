@@ -394,7 +394,7 @@ function finishBoss(){
     bossFace.style.display="none";
     bossHPContainer.style.display="none";
     sansDialogue.style.display="none";
-    nemo.style.display="block";
+    nemo.style.visibility="visible";
     nemo.src = equippedNemoji || nemojis[currentNemoji].sprite;
     nemo.style.transform="";
     restoreUI();
