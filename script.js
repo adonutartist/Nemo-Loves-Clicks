@@ -40,6 +40,8 @@ const bossHPFill = document.getElementById("bossHPFill");
 const bossHPText = document.getElementById("bossHPText");
 const sansDialogue = document.getElementById("sansDialogue");
 const bossHPContainer = document.getElementById("bossHPContainer");
+const qteWindow = document.getElementById("qteWindow");
+const qteKeys = document.getElementById("qteKeys");
 const sansFacesPhase1 = [
     "assets/phase 1 faces/tile000.png",
     "assets/phase 1 faces/tile001.png",
@@ -184,6 +186,9 @@ let bossMaxHP = 500;
 let bossClicks = 0;
 let sansUnlocked = false;
 let breakTimer;
+let qteActive = false;
+let qteSequence = [];
+let qteIndex = 0;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -367,6 +372,42 @@ function finishBoss(){
     restoreUI();
     startQTE();
 }
+function startQTE(){
+    if(qteActive) return;
+    qteActive=true;
+    qteWindow.style.display = "block";
+    const keys = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "A",
+        "S",
+        "D",
+        "F"
+    ];
+    qteSequence.push(
+        keys[Math.floor(Math.random()*keys.length)]
+    );
+    drawQTE();
+}
+function drawQTE(){
+    qteKeys.innerHTML = "";
+    qteSequence.forEach((key,index)=>{
+        const div = document.createElement("div");
+        const icons = {
+            ArrowUp: "⬆️",
+            ArrowDown: "⬇️",
+            ArrowLeft: "⬅️",
+            ArrowRight: "➡️"
+        };
+        div.textContent = icons[key] || key;
+        if(index < qteIndex){
+            div.style.opacity = ".25"
+        }
+        qteKeys.appendChild(div);
+    });
+}
 function breakRandomUI(){
     const alive = breakables.filter(x=>!x.classList.contains("broken"));
     if(alive.length==0)return;
@@ -387,6 +428,12 @@ function sansSwing(){
             clearInterval(anim);
         }
     },70);
+}
+function finishQTE(){
+    qteActive = false;
+    qteWindow.style.display = "none";
+    bossMidBody.src = "assets/attachments (3)/damaged.png";
+    finishBoss();
 }
 function evolveNemoji(){
     if(currentNemoji>=nemojis.length-1){
@@ -461,15 +508,11 @@ bossBody.addEventListener("click",()=>{
     nemo.click();
     updateBossHP();
     updateSansFace();
-    if(bossHP<=0){
+    if(bossHP<=0 && !qteActive){
         bossHP = 0;
         updateBossHP();
-        if(bossPhase==1){
-            bossPhase2();
-        }
-        else{
-            finishBoss();
-        }
+        startQTE();
+        return;
     }
 });
 nemo.addEventListener("click", () => {
@@ -591,20 +634,19 @@ nemo.addEventListener("click", () => {
         screenShake();
         createSparkBurst();
         updateSansFace();
-        if(bossHP<=0){
+        if(bossHP<=0 && !qteActive){
             bossHP = 0;
             updateBossHP();
-            if(bossPhase==1){
-                bossPhase2();
-            }
-            else{
-                finishBoss();
-            }
-            }
+            startQTE();
+            return;
         }
-        juiceClick();
-        screenShake();
-        createSparkBurst();
+    }
+    if(qteActive){
+        return;
+    }
+    juiceClick();
+    screenShake();
+    createSparkBurst();
 });
 function updateChestGlow(){
     if(newCollectionUnlock){
@@ -1043,7 +1085,21 @@ buyCursor.addEventListener("click", ()=>{
 document.addEventListener("mousemove",(e)=>{
     mouseX = e.clientX
     mouseY = e.clientY;
-})
+});
+document.addEventListener("keydown",(e)=>{
+    if(!qteActive) return;
+    let key = e.key;
+    if(key.length==1){
+        key = key.toUpperCase();
+    }
+    if(key == qteSequence[qteIndex]){
+        qteIndex++;
+        drawQTE();
+        if(qteIndex >= qteSequence.length){
+            finishQTE();
+        }
+    }
+});
 buyClanker.addEventListener("click", ()=>{
     if(clicks <clankerPrice){
         return;

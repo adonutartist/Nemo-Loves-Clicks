@@ -886,3 +886,28 @@ button, img, #nemo{
     transform: rotate(-12deg);
     pointer-events: none;
 }
+
+#qteWindow{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    background: #363636;
+    border: 4px solid white;
+    padding: 30px;
+    z-index: 9000;
+    text-align: center;
+}
+
+#qteTitle{
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+#qteKeys{
+    font-size: 4rem;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
