@@ -328,23 +328,16 @@ function startSansBattle(){
 function updateSansFace(){
     const percent = bossHP / bossMaxHP;
     let index = 0;
-    let faces;
+    if(percent<0.9) index=1;
+    if(percent<0.8) index=2;
+    if(percent<0.7) index=3;
+    if(percent<0.6) index=4;
+    if(percent<0.45) index=5;
+    if(percent<0.25) index=6;
     if(bossPhase==1){
         bossFace.src=sansFacesPhase1[index];
-        if(percent<0.9) index=1;
-        if(percent<0.8) index=2;
-        if(percent<0.7) index=3;
-        if(percent<0.6) index=4;
-        if(percent<0.45) index=5;
-        if(percent<0.25) index=6;
     }else{
         bossFace.src=sansFacesPhase2[index];
-        if(percent<0.9) index=1;
-        if(percent<0.8) index=2;
-        if(percent<0.7) index=3;
-        if(percent<0.6) index=4;
-        if(percent<0.45) index=5;
-        if(percent<0.25) index=6;
     }
 }
 function bossPhase2(){
