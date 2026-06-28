@@ -410,8 +410,6 @@ function finishBoss(){
     hp = maxHP;
     updateHP();
     saveGame();
-    console.log("Boss finishes");
-    console.log(nemo.style.display);
 }
 function startQTE(){
     if(qteActive) return;
@@ -578,6 +576,15 @@ function showAchievement(text){
         achievementToast.style.right = "-500px";
     }, 3000);
 }
+function refillNemojiHP(){
+    nemo.style.transform="scale(0.9)";
+    setTimeout(()=>{
+        nemo.style.transform="scale(1)";
+    },150);
+    hp=maxHP;
+    updateHP();
+    saveGame();
+}
 bossBody.addEventListener("click",()=>{
     nemo.click();
     updateBossHP();
@@ -624,7 +631,13 @@ nemo.addEventListener("click", () => {
         }
         updateHP();
         if(hp<=0){
-            evolveNemoji();
+            hp=0;
+            updateHP();
+            if(sansDefeated){
+                refillNemojiHP();
+            }else{
+                evolveNemoji();
+            }
         }
     }
     multiplierDisplay.textContent = "x" + multiplier + " Multiplier";
@@ -879,6 +892,11 @@ function startClankerLoop(){
             hp -= clankers;
             for(let i=0;i<clankers;i++){
                 createRobotPopup(1);
+            }
+            if(hp<=0){
+                refillNemojiHP();
+            }else{
+                updateHP();
             }
             updateHP();
             createSparkBurst();
