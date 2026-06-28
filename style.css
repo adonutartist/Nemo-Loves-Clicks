@@ -184,7 +184,7 @@ button, img, #nemo{
     animation: popupFloat 2s forwards;
     text-shadow: 2px 2px 0px #a86f00;
     transform: translate(-50%, -50%);
-    z-index: 20000;
+    z-index: 9000;
 }
 
 @keyframes shake{
@@ -769,8 +769,8 @@ button, img, #nemo{
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 5000;
-    pointer-events: auto;
+    z-index: 1000;
+    pointer-events: none;
 }
 
 #bossName{

@@ -369,23 +369,23 @@ function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
 function updateTitle(){
-    if(clicks >= 40){
+    if(clicks >= 450){
         playerTitle.textContent = "Nemo's Favourite Earthian";
         unlockAchievement("Nemo's Favourite Earthian");
     }
-    else if(clicks >= 30){
+    else if(clicks >= 350){
         playerTitle.textContent = "Addicted to Clicking";
         unlockAchievement("Addicted to Clicking");
     }
-    else if(clicks >= 20){
+    else if(clicks >= 250){
         playerTitle.textContent = "Loves Clicking";
         unlockAchievement("Loves Clicking");
     }
-    else if(clicks >= 10){
+    else if(clicks >= 150){
         playerTitle.textContent =  "Click Click Click!";
         unlockAchievement("Click Click Click!");
     }
-    else if(clicks >= 5){
+    else if(clicks >= 50){
         playerTitle.textContent =  "Clicking Gud for Health"
         unlockAchievement("Clicking Gud for Health");
     }
@@ -401,8 +401,10 @@ function setWavyText(text){
     });
 } 
 function showAchievement(text){
-    achievementSFX.currentTime = 0;
-    achievementSFX.play();
+    if(achievementSFXEnabled){
+        achievementSFX.currentTime = 0;
+        achievementSFX.play();
+    }
     achievementToast.textContent = "🏆 " + text;
     achievementToast.style.right = "20px";
     setTimeout(()=>{
@@ -410,18 +412,7 @@ function showAchievement(text){
     }, 3000);
 }
 bossBody.addEventListener("click",()=>{
-    if(!bossFight) return;
-    let clickValue = 1 + bonusClicks;
-    if(Math.random()<0.05){
-        clickValue*=10;
-        createPopup(clickValue,true);
-        critSFX.currentTime=0;
-        critSFX.play();
-    }else{
-        createPopup(clickValue,false);
-    }
-    bossHP-=clickValue;
-    bossClicks+=clickValue;
+    nemo.click();
     updateBossHP();
     updateSansFace();
     if(bossHP<=0){
@@ -460,6 +451,9 @@ nemo.addEventListener("click", () => {
         bossClicks+=clickValue;
         updateBossHP();
         createPopup(clickValue,isCrit);
+        juiceClick();
+        screenShake();
+        createSparkBurst();
         updateSansFace();
         if(bossHP<=0){
             bossHP=0;
@@ -559,8 +553,10 @@ function updateChestGlow(){
     }
 }
 function createUnlockCard(emoji){
-    unlockSFX.currentTime = 0;
-    unlockSFX.play();
+    if(cardSFXEnabled){
+        unlockSFX.currentTime = 0;
+        unlockSFX.play();
+    }
     const card = document.createElement("div");
     card.className = "unlockCard";
     card.innerHTML = `
@@ -584,9 +580,10 @@ function createUnlockCard(emoji){
 function createOra(){
     const ora = document.createElement("img");
     ora.src = "assets/attachments (4)/ora.png";
-    const SFX = oraSFX.cloneNode();
-    SFX.volume = oraSFX.volume;
-    SFX.play();
+    if(oraSFXEnabled){
+        oraSFX.currentTime = 0;
+        oraSFX.play();
+    }
     ora.className = "ora";
     const rect = nemo.getBoundingClientRect();
     const angle = Math.random() * Math.PI * 2;
@@ -638,8 +635,10 @@ function clankerAttack(){
         : nemo.getBoundingClientRect();
     const nemoX = targetRect.left + targetRect.width / 2;
     const nemoY = targetRect.top + targetRect.height / 2;
-    clankerSFX.currentTime = 0;
-    clankerSFX.play();
+    if(clankerSFXEnabled){
+        clankerSFX.currentTime = 0;
+        clankerSFX.play();
+    }
     document.querySelectorAll(".clanker").forEach((clanker)=>{
         const clankerRect = clanker.getBoundingClientRect();
         const clankerX = clankerRect.left + clankerRect.width / 2;
@@ -708,8 +707,10 @@ function startClankerLoop(){
 function createPopup(value, isCrit){
     const popup = document.createElement("div");
     if(isCrit){
-        critSFX.currentTime = 0;
-        critSFX.play();
+        if(critSFXEnabled){
+            critSFX.currentTime = 0;
+            critSFX.play();
+        }
         popup.textContent = "CRIT! +" + value;
         popup.style.fontSize = "3rem";
         popup.style.color = "red";
@@ -912,11 +913,11 @@ function loadGame(){
     updateHP();
     updateAchievementPage();
 }
-toggleCrit.onchange=()=>critSFXEnabled=toggleCrit.checked;
-toggleOra.onchange=()=>oraSFXEnabled=toggleOra.checked;
-toggleClanker.onchange=()=>clankerSFXEnabled=toggleClanker.checked;
-toggleAchievement.onchange=()=>achievementSFXEnabled=toggleAchievement.checked;
-toggleCard.onchange=()=>cardSFXEnabled=toggleCard.checked;
+toggleCrit.onchange=()=>{critSFXEnabled=toggleCrit.checked};
+toggleOra.onchange=()=>{oraSFXEnabled=toggleOra.checked};
+toggleClanker.onchange=()=>{clankerSFXEnabled=toggleClanker.checked};
+toggleAchievement.onchange=()=>{achievementSFXEnabled=toggleAchievement.checked};
+toggleCard.onchange=()=>{cardSFXEnabled=toggleCard.checked};
 shopButton.addEventListener("click", ()=>{
     shop.style.display = "block";
     shopOverlay.style.display = "block";
@@ -950,6 +951,7 @@ audioButton.addEventListener("click",()=>{
 musicSlider.addEventListener("input",()=>{
     bgMusic.volume = musicSlider.value;
     shopMusic.volume = musicSlider.value;
+    bossMusic.volume = musicSlider.value;
 });
 nemojiTab.addEventListener("click", ()=>{
     nemojiPage.style.display = "block";
