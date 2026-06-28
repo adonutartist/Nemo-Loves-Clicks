@@ -9,6 +9,7 @@ const shopButton = document.getElementById("shopButton");
 const shop = document.getElementById("shop");
 const buyCursor = document.getElementById("buyCursor");
 const buyClanker = document.getElementById("buyClanker");
+const qteTitle = document.getElementById("qteTitle");
 const buyClankerJuice = document.getElementById("buyClankerJuice");
 const foodButton = document.getElementById("foodButton");
 const collectionButton = document.getElementById("collectionButton");
@@ -189,6 +190,8 @@ let breakTimer;
 let qteActive = false;
 let qteSequence = [];
 let qteIndex = 0;
+let qteTimer;
+let qteTime = 5;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -370,10 +373,31 @@ function startPhase2(){
 function finishBoss(){
     bossFight=false;
     restoreUI();
-    startQTE();
+    bossMusic.pause();
+    bossMusic.currentTime=0;
+    bossOverlay.style.display="none";
+    nemo.style.display="block";
+    nemo.src = equippedNemoji;
+    updateHP();
+    updateCounter();
+    updateNemojiPage();
+    saveGame();
+    bgMusic.currentTime = 0;
+    bgMusic.play();
 }
 function startQTE(){
     if(qteActive) return;
+    clearInterval(qteTimer);
+    let remaining = qteTime;
+    qteTitle.textContent = "FINISH HIM ("+remaining+")";
+    qteTimer = setInterval(()=>{
+        remaining--;
+        qteTitle.textContent = "FINISH HIM ("+remaining+")";
+        if(remaining<=0){
+            clearInterval(qteTimer);
+            failQTE();
+        }
+    },1000);
     qteActive=true;
     qteWindow.style.display = "block";
     const keys = [
@@ -386,10 +410,26 @@ function startQTE(){
         "D",
         "F"
     ];
-    qteSequence.push(
-        keys[Math.floor(Math.random()*keys.length)]
-    );
+    qteSequence=[];
+    qteIndex=0;
+    for(let i=0;i<6;i++){
+        qteSequence.push(
+            keys[Math.floor(Math.random()*keys.length)]
+        );
+    }
+    
     drawQTE();
+}
+function failQTE(){
+    qteActive = false;
+    qteWindow.style.display="none";
+    bossHP=100;
+    bossMaxHP=100;
+    updateBossHP();
+    bossHPContainer.style.display="block";
+    bossFight="true";
+    qteSequence=[];
+    qteIndex=0;
 }
 function drawQTE(){
     qteKeys.innerHTML = "";
@@ -432,8 +472,12 @@ function sansSwing(){
 function finishQTE(){
     qteActive = false;
     qteWindow.style.display = "none";
+    bossMidBody.style.display="block";
     bossMidBody.src = "assets/attachments (3)/damaged.png";
-    finishBoss();
+    bossFace.src = sansFacesPhase2[4];
+    setTimeout(() => {
+        finishBoss();
+    }, 1500);
 }
 function evolveNemoji(){
     if(currentNemoji>=nemojis.length-1){
