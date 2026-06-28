@@ -34,9 +34,12 @@ const hpFill = document.getElementById("hpFill");
 const hpText = document.getElementById("hpText");
 const bossOverlay = document.getElementById("bossOverlay");
 const bossBody = document.getElementById("bossBody");
+const bossMidBody = document.getElementById("bossMidBody");
 const bossFace = document.getElementById("bossFace");
 const bossHPFill = document.getElementById("bossHPFill");
 const bossHPText = document.getElementById("bossHPText");
+const sansDialogue = document.getElementById("sansDialogue");
+const bossHPContainer = document.getElementById("bossHPContainer");
 const sansFacesPhase1 = [
     "assets/phase 1 faces/tile000.png",
     "assets/phase 1 faces/tile001.png",
@@ -82,6 +85,15 @@ const bossMusic = new Audio("assets/attachments (5)/Boss.mp3");
 bossMusic.loop = true;
 bossMusic.volume = .45;
 const max_clankers = 4;
+const breakables = [
+    multiplierDisplay,
+    playerTitle,
+    shopButton,
+    foodButton,
+    collectionButton,
+    audioButton,
+    bossHPContainer
+];
 const nemojis = [
     {
         name: "Happy Nemo",
@@ -171,6 +183,7 @@ let bossHP = 500;
 let bossMaxHP = 500;
 let bossClicks = 0;
 let sansUnlocked = false;
+let breakTimer;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -315,22 +328,62 @@ function startSansBattle(){
 function updateSansFace(){
     const percent = bossHP / bossMaxHP;
     let index = 0;
-    if(percent<0.9) index=1;
-    if(percent<0.8) index=2;
-    if(percent<0.7) index=3;
-    if(percent<0.6) index=4;
-    if(percent<0.45) index=5;
-    if(percent<0.25) index=6;
+    let faces;
     if(bossPhase==1){
         bossFace.src=sansFacesPhase1[index];
+        if(percent<0.9) index=1;
+        if(percent<0.8) index=2;
+        if(percent<0.7) index=3;
+        if(percent<0.6) index=4;
+        if(percent<0.45) index=5;
+        if(percent<0.25) index=6;
     }else{
         bossFace.src=sansFacesPhase2[index];
+        if(percent<0.9) index=1;
+        if(percent<0.8) index=2;
+        if(percent<0.7) index=3;
+        if(percent<0.6) index=4;
+        if(percent<0.45) index=5;
+        if(percent<0.25) index=6;
     }
 }
 function bossPhase2(){
+    bossPhase=2;
+    bossHP=250;
+    bossMaxHP=250;
+    updateBossHP();
+    bossHPContainer.style.display="none";
+    bossMusic.play();
+    sansDialogue.style.display = "block";
+    bossMidBody.src = "assets/attachments (3)/up.png";
+    bossFace.src = "assets/phase 2 faces/tile007.png";
+    setTimeout(() => {
+        sansDialogue.style.display="none";
+        bossMidBody.style.display="none";
+        startPhase2();
+    }, 5000);
+}
+function startPhase2(){
+    bossFight=true;
+    bossHP=250;
+    bossMaxHP=250;
+    bossClicks=0;
+}
+function finishBoss(){
     bossFight=false;
-    bossMusic.pause();
-    alert("Phase 2 coming next.")
+    restoreUI();
+    startQTE();
+}
+function breakRandomUI(){
+    const alive = breakables.filter(x=>!x.classList.contains("broken"));
+    if(alive.length==0)return;
+    const ui=alive[Math.floor(Math.random()*alive.length)];
+    ui.classList.add("broken");
+}
+function restoreUI(){
+    breakables.forEach(x=>{
+        x.classList.remove("broken");
+    });
 }
 function sansSwing(){
     let i=0;
@@ -416,7 +469,14 @@ bossBody.addEventListener("click",()=>{
     updateBossHP();
     updateSansFace();
     if(bossHP<=0){
-        bossPhase2();
+        bossHP = 0;
+        updateBossHP();
+        if(bossPhase==1){
+            bossPhase2();
+        }
+        else{
+            finishBoss();
+        }
     }
 });
 nemo.addEventListener("click", () => {
@@ -446,21 +506,7 @@ nemo.addEventListener("click", () => {
         isCrit = true;
     }
     clicks += clickValue;
-    if(bossFight){
-        bossHP-=clickValue;
-        bossClicks+=clickValue;
-        updateBossHP();
-        createPopup(clickValue,isCrit);
-        juiceClick();
-        screenShake();
-        createSparkBurst();
-        updateSansFace();
-        if(bossHP<=0){
-            bossHP=0;
-            updateBossHP();
-            bossPhase2();
-        }
-    }
+    
     if(!bossFight){
         hp--;
         updateHP();
@@ -515,6 +561,9 @@ nemo.addEventListener("click", () => {
     clearTimeout(window.streakTimer);
     window.streakTimer = setTimeout(() => {
         clickStreak = 0;
+        if(bossPhase==2){
+            breakRandomUI();
+        }
         comboTitle.innerHTML = `<img class="comboIcon" src="assets/attachments (1)/Tinder.png"> Combo`;
         comboNumber.textContent = "x0";
         currentTitle = "";
@@ -540,9 +589,29 @@ nemo.addEventListener("click", () => {
     
     updateNemojiPage();
     createPopup(clickValue, isCrit);
-    juiceClick();
-    screenShake();
-    createSparkBurst();
+    if(bossFight){
+        bossHP-=clickValue;
+        bossClicks+=clickValue;
+        updateBossHP();
+        createPopup(clickValue,isCrit);
+        juiceClick();
+        screenShake();
+        createSparkBurst();
+        updateSansFace();
+        if(bossHP<=0){
+            bossHP = 0;
+            updateBossHP();
+            if(bossPhase==1){
+                bossPhase2();
+            }
+            else{
+                finishBoss();
+            }
+            }
+        }
+        juiceClick();
+        screenShake();
+        createSparkBurst();
 });
 function updateChestGlow(){
     if(newCollectionUnlock){

@@ -796,6 +796,13 @@ button, img, #nemo{
     pointer-events: auto;
 }
 
+#bossMidBody{
+    position: absolute;
+    left: 23px;
+    top: 35px;
+    width:217px;
+}
+
 #bossFace{
     position: absolute;
     width: 140px;
@@ -848,4 +855,34 @@ button, img, #nemo{
     to{
         opacity: 0;
     }
+}
+
+#sansDialogue{
+    position: fixed;
+    left: 50%;
+    top: 5%;
+    transform: translateX(-50%);
+    width: 650px;
+    z-index: 6000;
+    display: none;
+    pointer-events: none;
+    animation: dialoguePop .4s;
+}
+
+@keyframes dialoguePop{
+    from{
+        transform: scale(.8);
+        opacity: 0;
+    }
+    to{
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.broken{
+    opacity: .2;
+    filter: grayscale(1);
+    transform: rotate(-12deg);
+    pointer-events: none;
 }
