@@ -803,6 +803,14 @@ button, img, #nemo{
     width:217px;
 }
 
+#bossDamagedBody{
+    position: fixed;
+    left: 660px;
+    top: 400px;
+    width: 210px;
+    display: none;
+}
+
 #bossFace{
     position: absolute;
     width: 140px;

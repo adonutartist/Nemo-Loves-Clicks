@@ -37,6 +37,7 @@ const bossOverlay = document.getElementById("bossOverlay");
 const bossBody = document.getElementById("bossBody");
 const bossMidBody = document.getElementById("bossMidBody");
 const bossFace = document.getElementById("bossFace");
+const bossDamagedBody = document.getElementById("bossDamagedBody");
 const bossHPFill = document.getElementById("bossHPFill");
 const bossHPText = document.getElementById("bossHPText");
 const sansDialogue = document.getElementById("sansDialogue");
@@ -472,12 +473,12 @@ function sansSwing(){
 function finishQTE(){
     qteActive = false;
     qteWindow.style.display = "none";
-    bossMidBody.style.display="block";
-    bossMidBody.src = "assets/attachments (3)/damaged.png";
+    bossDamagedBody.style.display="block";
+    bossDamagedBody.src = "assets/attachments (3)/damaged.png";
     bossFace.src = sansFacesPhase2[4];
     setTimeout(() => {
         finishBoss();
-    }, 1500);
+    }, 5000);
 }
 function evolveNemoji(){
     if(currentNemoji>=nemojis.length-1){
@@ -506,19 +507,19 @@ function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
 function updateTitle(){
-    if(clicks >= 450){
+    if(clicks >= 650){
         playerTitle.textContent = "Nemo's Favourite Earthian";
         unlockAchievement("Nemo's Favourite Earthian");
     }
-    else if(clicks >= 350){
+    else if(clicks >= 500){
         playerTitle.textContent = "Addicted to Clicking";
         unlockAchievement("Addicted to Clicking");
     }
-    else if(clicks >= 250){
+    else if(clicks >= 350){
         playerTitle.textContent = "Loves Clicking";
         unlockAchievement("Loves Clicking");
     }
-    else if(clicks >= 150){
+    else if(clicks >= 200){
         playerTitle.textContent =  "Click Click Click!";
         unlockAchievement("Click Click Click!");
     }
@@ -672,16 +673,21 @@ nemo.addEventListener("click", () => {
     if(bossFight){
         bossHP-=clickValue;
         bossClicks+=clickValue;
+        if(bossHP<0){
+            bossHP=0;
+        }
         updateBossHP();
         createPopup(clickValue,isCrit);
         juiceClick();
         screenShake();
         createSparkBurst();
         updateSansFace();
-        if(bossHP<=0 && !qteActive){
-            bossHP = 0;
-            updateBossHP();
-            startQTE();
+        if(bossHP==0){
+            if(bossPhase==1){
+                bossPhase2();
+            }else if(bossPhase==2){
+                startQTE();
+            }
             return;
         }
     }
