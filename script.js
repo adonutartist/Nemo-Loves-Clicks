@@ -146,6 +146,14 @@ const nemojis = [
         unlock: 40,
         rarity: "Mythic",
         requirement: "40"
+    },
+    {
+        name: "SANS",
+        sprite: "assets/phase 2 faces/tile007.png",
+        src: "assets/phase 2 faces/tile007.png",
+        unlock: -1,
+        rarity: "BOSS",
+        requirement: "-1"
     }
 ];
 let mouseX = 0;
@@ -193,6 +201,7 @@ let qteSequence = [];
 let qteIndex = 0;
 let qteTimer;
 let qteTime = 5;
+let sansDefeated = false;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -373,18 +382,36 @@ function startPhase2(){
 }
 function finishBoss(){
     bossFight=false;
-    restoreUI();
+    bossPhase=0;
+    sansDefeated=true;
+    sansUnlocked=true;
     bossMusic.pause();
     bossMusic.currentTime=0;
     bossOverlay.style.display="none";
+    bossBody.style.display="none";
+    bossDamagedBody.style.display="none";
+    bossMidBody.style.display="none";
+    bossFace.style.display="none";
+    bossHPContainer.style.display="none";
+    sansDialogue.style.display="none";
     nemo.style.display="block";
-    nemo.src = equippedNemoji;
+    nemo.src = equippedNemoji || nemojis[currentNemoji].sprite;
+    nemo.style.transform="";
+    restoreUI();
+    document.getElementById("hpContainer").style.display="block";
     updateHP();
     updateCounter();
     updateNemojiPage();
-    saveGame();
     bgMusic.currentTime = 0;
     bgMusic.play();
+    unlockAchievement("You Broke The One Who Broke The Rules!");
+    currentNemoji = nemojis.length - 1;
+    maxHP = nemojis[currentNemoji].hp || 100;
+    hp = maxHP;
+    updateHP();
+    saveGame();
+    console.log("Boss finishes");
+    console.log(nemo.style.display);
 }
 function startQTE(){
     if(qteActive) return;
@@ -482,7 +509,9 @@ function finishQTE(){
 }
 function evolveNemoji(){
     if(currentNemoji>=nemojis.length-1){
-        startSansBattle();
+        if(!sansDefeated){
+            startSansBattle();
+        }
         return;
     }
     currentNemoji++;
@@ -590,6 +619,9 @@ nemo.addEventListener("click", () => {
     
     if(!bossFight){
         hp--;
+        if(hp<0){
+            hp=0;
+        }
         updateHP();
         if(hp<=0){
             evolveNemoji();
@@ -1015,7 +1047,9 @@ function saveGame(){
         unlockedNemojis: unlockedNemojis,
         currentNemoji: currentNemoji,
         hp: hp,
-        unlockedNemojis: unlockedNemojis
+        unlockedNemojis: unlockedNemojis,
+        sansDefeated: sansDefeated,
+        sansUnlocked: sansUnlocked
     };
     localStorage.setItem(
         "nemoSave",
@@ -1054,8 +1088,16 @@ function loadGame(){
     equippedNemoji = saveData.equippedNemoji || null;
     lastUnlockedNemoji = saveData.lastUnlockedNemoji || equippedNemoji;
     currentNemoji = saveData.currentNemoji||0;
-    hp = saveData.hp??100;
+    maxHP = nemojis[currentNemoji].hp || 100;
+    if(hp<0){
+        hp=maxHP;
+    }
+    if(hp>maxHP){
+        hp=maxHP
+    }
     unlockedNemojis = saveData.unlockedNemojis||[0];
+    sansDefeated = saveData.sansDefeated || false;
+    sansUnlocked = saveData.sansUnlocked || false;
     if(equippedNemoji){
         nemo.src = equippedNemoji;
     }
