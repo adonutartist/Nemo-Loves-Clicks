@@ -108,6 +108,7 @@ const nemojis = [
         sprite: "assets/attachments (2)/sprite.png",
         src: "assets/attachments (2)/sprite.png",
         unlock: 0,
+        hp: 100,
         rarity: "Common",
         requirement: 0
     },
@@ -115,49 +116,55 @@ const nemojis = [
         name: "Awkward Nemo",
         sprite: "assets/attachments (2)/sprite (11).png",
         src: "assets/attachments (2)/sprite (11).png",
-        unlock: 5,
+        unlock: 100,
+        hp: 250,
         rarity: "Common",
-        requirement: 5
+        requirement: 100
     },
     {
         name: "Nervous Nemo",
         sprite: "assets/attachments (2)/sprite (16).png",
         src: "assets/attachments (2)/sprite (16).png",
-        unlock: 10,
+        unlock: 350,
+        hp: 400,
         rarity: "Rare",
-        requirement: 10
+        requirement: 250
     },
     {
         name: "Too Happy Nemo",
         sprite: "assets/attachments (2)/sprite (25).png",
         src: "assets/attachments (2)/sprite (25).png",
-        unlock: 20,
+        unlock: 750,
+        hp: 550,
         rarity: "Epic",
-        requirement: 20
+        requirement: 750
     },
     {
         name: "Krazy Happy Nemo",
         sprite: "assets/attachments (2)/sprite (24).png",
         src: "assets/attachments (2)/sprite (24).png",
-        unlock: 30,
+        unlock: 1300,
+        hp: 700,
         rarity: "Legendary",
-        requirement: 30
+        requirement: 1300
     },
     {
         name: "You are wasting your time on Nemo",
         sprite: "assets/attachments (2)/sprite (15).png",
         src: "assets/attachments (2)/sprite (15).png",
-        unlock: 40,
+        unlock: 2000,
+        hp: 850,
         rarity: "Mythic",
-        requirement: "40"
+        requirement: 2000
     },
     {
         name: "SANS",
         sprite: "assets/phase 2 faces/tile007.png",
         src: "assets/phase 2 faces/tile007.png",
         unlock: -1,
+        hp: 1500,
         rarity: "BOSS",
-        requirement: "-1"
+        requirement: -1
     }
 ];
 let mouseX = 0;
@@ -195,8 +202,8 @@ let maxHP = 100;
 let hp = maxHP;
 let bossFight = false;
 let bossPhase = 1;
-let bossHP = 500;
-let bossMaxHP = 500;
+let bossHP = 1000;
+let bossMaxHP = 1000;
 let bossClicks = 0;
 let sansUnlocked = false;
 let breakTimer;
@@ -330,8 +337,8 @@ function startSansBattle(){
     nemo.style.visibility="hidden";
     bossFight =true;
     bossPhase = 1;
-    bossHP = 500;
-    bossMaxHP = 500;
+    bossHP = 1000;
+    bossMaxHP = 1000;
     bossClicks = 0;
     updateBossHP();
     bossOverlay.style.display = "flex";
@@ -364,8 +371,8 @@ function updateSansFace(){
 }
 function bossPhase2(){
     bossPhase=2;
-    bossHP=250;
-    bossMaxHP=250;
+    bossHP=1500;
+    bossMaxHP=1500;
     updateBossHP();
     bossHPContainer.style.display="none";
     bossMusic.play();
@@ -380,8 +387,8 @@ function bossPhase2(){
 }
 function startPhase2(){
     bossFight=true;
-    bossHP=250;
-    bossMaxHP=250;
+    bossHP=1500;
+    bossMaxHP=1500;
     bossClicks=0;
 }
 function finishBoss(){
@@ -525,6 +532,7 @@ function evolveNemoji(){
     newCollectionUnlock = true;
     updateChestGlow();
     updateNemojiPage();
+    maxHP = nemojis[currentNemoji].hp;
     hp=maxHP;
     saveGame();
     updateHP();
@@ -975,6 +983,9 @@ function createSpendPopup(amount){
     }, 1000);
 }
 function updateShop(){
+    const buyCursorCost = document.getElementById("buyCursorCost");
+    const buyClankerCost = document.getElementById("buyClankerCost");
+    const buyClankerJuiceCost = document.getElementById("buyClankerJuiceCost");
     if(cursorLevel >= maxCursorLevel){
         buyCursorCost.textContent = `(${cursorLevel}/${maxCursorLevel}) - MAX`;
     }
@@ -1110,8 +1121,9 @@ function loadGame(){
     unlockedNemojis = saveData.unlockedNemojis || [0];
     equippedNemoji = saveData.equippedNemoji || null;
     lastUnlockedNemoji = saveData.lastUnlockedNemoji || equippedNemoji;
-    currentNemoji = saveData.currentNemoji||0;
-    maxHP = nemojis[currentNemoji].hp || 100;
+    currentNemoji = saveData.currentNemoji || 0;
+    maxHP = nemojis[currentNemoji].hp;
+    hp = saveData.hp ?? maxHP;
     if(hp<0){
         hp=maxHP;
     }
