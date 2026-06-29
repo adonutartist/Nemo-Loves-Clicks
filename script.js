@@ -44,6 +44,10 @@ const sansDialogue = document.getElementById("sansDialogue");
 const bossHPContainer = document.getElementById("bossHPContainer");
 const qteWindow = document.getElementById("qteWindow");
 const qteKeys = document.getElementById("qteKeys");
+const buyCursorCost = document.getElementById("buyCursorCost");
+const buyClankerCost = document.getElementById("buyClankerCost");
+const buyClankerJuiceCost = document.getElementById("buyClankerJuiceCost");
+const buyEnergyDrinkCost = document.getElementById("buyEnergyDrinkCost");
 const sansFacesPhase1 = [
     "assets/phase 1 faces/tile000.png",
     "assets/phase 1 faces/tile001.png",
@@ -395,6 +399,7 @@ function finishBoss(){
     bossHPContainer.style.display="none";
     sansDialogue.style.display="none";
     nemo.style.visibility="visible";
+    document.querySelector("#game h1").style.display = "block";
     nemo.src = equippedNemoji || nemojis[currentNemoji].sprite;
     nemo.style.transform="";
     restoreUI();
@@ -598,16 +603,16 @@ bossBody.addEventListener("click",()=>{
 });
 nemo.addEventListener("click", () => {
     let multiplier = 1;
-    if(clickStreak >= 100){
+    if(clickStreak >= 1000){
         multiplier = 10;
     }
-    else if(clickStreak >= 75){
+    else if(clickStreak >= 400){
         multiplier = 5;
     }
-    else if(clickStreak >= 50){
+    else if(clickStreak >= 200){
         multiplier = 3;
     }
-    else if(clickStreak >= 25){
+    else if(clickStreak >= 50){
         multiplier = 2;
     }
     let clickValue = multiplier + bonusClicks;
@@ -625,7 +630,7 @@ nemo.addEventListener("click", () => {
     clicks += clickValue;
     
     if(!bossFight){
-        hp--;
+        hp -= clickValue;
         if(hp<0){
             hp=0;
         }
@@ -971,18 +976,18 @@ function createSpendPopup(amount){
 }
 function updateShop(){
     if(cursorLevel >= maxCursorLevel){
-        buyCursor.textContent = `Tiny Cursor (${cursorLevel}/${maxCursorLevel}) - MAX`;
+        buyCursorCost.textContent = `(${cursorLevel}/${maxCursorLevel}) - MAX`;
     }
     else{
-        buyCursor.textContent = `Tiny Cursor (${cursorLevel}/${maxCursorLevel}) - ${cursorPrice}`;
+        buyCursorCost.textContent = `(${cursorLevel}/${maxCursorLevel}) - ${cursorPrice}`;
     }
     if(clankers >= max_clankers){
-        buyClanker.textContent = `Clanker (${clankers}/4) - MAX`;
+        buyClankerCost.textContent = `(${clankers}/4) - MAX`;
     }
     else{
-        buyClanker.textContent = `Clanker (${clankers}/4) - ${clankerPrice}`;
+        buyClankerCost.textContent = `(${clankers}/4) - ${clankerPrice}`;
     }
-    buyClankerJuice.textContent = `Clanker Juice Lv.${clankerJuiceLevel} - ${clankerJuicePrice}`;
+    buyClankerJuiceCost.textContent = `Clanker Juice Lv.${clankerJuiceLevel} - ${clankerJuicePrice}`;
     if(clankers <= 0){
         buyClankerJuice.disabled = true;
         buyClankerJuice.style.opacity = "0.4";

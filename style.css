@@ -302,7 +302,7 @@ button, img, #nemo{
 
 #shopButton{
     position: fixed;
-    top: 20px;
+    top: 150px;
     left: 20px;
     z-index: 1000;
     width: 96px;
@@ -365,7 +365,7 @@ button, img, #nemo{
 #foodButton{
     position: fixed;
     left: 20px;
-    top: 130px;
+    top: 250px;
     width: 96px;
     height: 96px;
     cursor: pointer;
@@ -491,7 +491,7 @@ button, img, #nemo{
 #collectionButton{
     position: fixed;
     left: 20px;
-    top: 240px;
+    top: 350px;
     width: 96px;
     height: 96px;
     cursor: pointer;
@@ -685,7 +685,7 @@ button, img, #nemo{
 #audioButton{
     position: fixed;
     left: 20px;
-    top: 350px;
+    top: 450px;
     width: 96px;
     height: 96px;
     cursor: pointer;
@@ -805,10 +805,17 @@ button, img, #nemo{
 
 #bossDamagedBody{
     position: absolute;
-    left: 660px;
-    top: 400px;
+    left: 12px;
+    top: 105px;
     width: 210px;
     display: none;
+}
+
+.shopCost{
+    margin-top: auto;
+    font-weight: bold;
+    color: #dbdbdb;
+    font-size: 1.1rem;
 }
 
 #bossFace{
@@ -918,4 +925,52 @@ button, img, #nemo{
     display: flex;
     gap: 20px;
     justify-content: center;
+}
+
+.shopUpgrade{
+    font-family: "Determination", sans-serif;
+    width: 220px;
+    min-height: 180px;
+    background: #565656;
+    border: 3px solid white;
+    border-radius: 18px;
+    color: white;
+    padding: 12px;
+    cursor: pointer;
+    transition: .18s;
+    box-shadow: 0 6px 15px rgba(215, 215, 215, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.shopUpgrade:hover{
+    transform: translateY(-4px);
+    background: #7e7e7e;
+    box-shadow: 0 0 18px rgba(221, 221, 221, 0.25);
+}
+
+.shopUpgrade:active{
+    transform: scale(.97);
+}
+
+.shopUpgrade img{
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.shopUpgrade h3{
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.shopUpgrade p{
+    margin: 0;
+    text-align: center;
+    font-size: .95rem;
+    color: #ddd;
 }
