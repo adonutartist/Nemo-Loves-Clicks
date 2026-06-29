@@ -818,6 +818,23 @@ button, img, #nemo{
     font-size: 1.1rem;
 }
 
+.sideBarItem{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.sideBarItem span{
+    color: white;
+    font-size: 1.2rem;
+    user-select: none;
+}
+
+.sideBarItem img{
+    cursor: pointer;
+}
+
 #bossFace{
     position: absolute;
     width: 140px;
