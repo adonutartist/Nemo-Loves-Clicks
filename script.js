@@ -25,6 +25,10 @@ const buyEnergyDrink = document.getElementById("buyEnergyDrink");
 const shopOverlay = document.getElementById("shopOverlay");
 const audioButton = document.getElementById("audioButton");
 const audioWindow = document.getElementById("audioWindow");
+const mailButton = document.getElementById("mailButton");
+const mailWindow = document.getElementById("mailWindow");
+const mailList = document.getElementById("mailList");
+const mailContent = document.getElementById("mailContent");
 const toggleCrit = document.getElementById("toggleCrit");
 const toggleOra = document.getElementById("toggleOra");
 const toggleClanker = document.getElementById("toggleClanker");
@@ -213,6 +217,8 @@ let qteIndex = 0;
 let qteTimer;
 let qteTime = 5;
 let sansDefeated = false;
+let mails = [];
+let unreadMail = false;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -395,6 +401,22 @@ function finishBoss(){
     bossFight=false;
     bossPhase=0;
     sansDefeated=true;
+    addMail(
+        "Congratulations! (I guess?)",
+    `Nemo here! Woahhh you actually defeated my glorious, my gigachad, my king, my love~ SANS ;-;
+    Well I expected that much from an unemployed guy who was doomscrolling
+    on his phone untill he stumbled upon my game...
+
+    But I am truly thankful to you for playing my game and coming so far
+    I am sure you loved TORMENTING my cute lil Nemojis :<
+    
+    I plan on expanding this game way further adding more stuff to the shop,
+    more boss battles and ofcoure some more juice to the game to make it ultra pro max cozy and satisfying to click :]
+    (If you were lazy enough you may have found it the hidden Nemoji :3 if u did find it then imma just say:
+    How the hell are you so damm lazy you frikin Brat!)
+    
+    See you again soon dear player! Cyaaaaaa~~`
+    );
     sansUnlocked=true;
     bossMusic.pause();
     bossMusic.currentTime=0;
@@ -422,6 +444,28 @@ function finishBoss(){
     hp = maxHP;
     updateHP();
     saveGame();
+}
+function updateMailGlow(){
+    if(unreadMail){
+        mailButton.classList.add("glow");
+    }
+    else{
+        mailButton.classList.remove("glow");
+    }
+}
+function updateMailWindow(){
+    mailList.innerHTML="";
+    mails.forEach((mail,index)=>{
+        const div=document.createElement("div");
+        div.textContent=mail.title;
+        div.onclick=()=>{
+            mailContent.textContent=mail.body;
+            mail.read=true;
+            unreadMail=mails.some(m=>!m.read);
+            updateMailGlow();
+        };
+        mailContent.appendChild(div);
+    });
 }
 function startQTE(){
     if(qteActive) return;
@@ -516,6 +560,17 @@ function finishQTE(){
     setTimeout(() => {
         finishBoss();
     }, 5000);
+}
+function addMail(title,body){
+    mails.push({
+        title:title,
+        body:body,
+        read:false
+    });
+    unreadMail=true;
+    updateMailGlow();
+    updateMailWindow();
+    saveGame();
 }
 function evolveNemoji(){
     if(currentNemoji>=nemojis.length-1){
@@ -1083,7 +1138,8 @@ function saveGame(){
         hp: hp,
         unlockedNemojis: unlockedNemojis,
         sansDefeated: sansDefeated,
-        sansUnlocked: sansUnlocked
+        sansUnlocked: sansUnlocked,
+        mails:mails
     };
     localStorage.setItem(
         "nemoSave",
@@ -1133,12 +1189,31 @@ function loadGame(){
     unlockedNemojis = saveData.unlockedNemojis||[0];
     sansDefeated = saveData.sansDefeated || false;
     sansUnlocked = saveData.sansUnlocked || false;
+    mails=saveData.mails||[];
     if(equippedNemoji){
         nemo.src = equippedNemoji;
     }
+    if(mails.length==0){
+        addMail(
+            "Welcome to NLC!"
+        `Hello Player!
+        Welcome to NLC a chaotic satisfying idle clicker game 
+        made by yours truly Nemo Donut!
+        This game was made as a submission for the Beest YSWS Event by HackClub.
+        
+        Rules are simple:
+        - Click
+        - Click More
+        - Click Again
+        - Keeeeep Clickkinggggg!!
+        
+        Have fun!!`
+        );
+    }
     updateCounter();
     updateTitle();
-    
+    updateMailWindow();
+    updateMailGlow();
     updateShop();
     updateNemojiPage();
     updateHP();
@@ -1154,6 +1229,9 @@ shopButton.addEventListener("click", ()=>{
     shopOverlay.style.display = "block";
     updateMusic();
 });
+mailButton.onclick=()=>{
+    mailWindow.style.display="block";
+};
 shopOverlay.addEventListener("click", ()=>{
     shop.style.display = "none";
     foodShop.style.display = "none";
