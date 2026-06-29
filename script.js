@@ -1286,8 +1286,8 @@ setInterval(()=>{
 }, 1000);
 loadGame();
 updateCursorFollowers();
-
 animateFollowers();
+updateShop();
 
 document.addEventListener("click", ()=>{
     bgMusic.play();
