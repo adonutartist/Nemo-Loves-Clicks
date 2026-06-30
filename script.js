@@ -413,9 +413,12 @@ function finishBoss(){
     I am sure you loved TORMENTING my cute lil Nemojis :<
     
     I plan on expanding this game way further adding more stuff to the shop,
-    more boss battles and ofcoure some more juice to the game to make it ultra pro max cozy and satisfying to click :]
-    (If you were lazy enough you may have found it the hidden Nemoji :3 if u did find it then imma just say:
-    How the hell are you so damm lazy you frikin Brat!)
+    more boss battles and ofcoure some more juice to the game to make it 
+    ultra pro max cozy and satisfying to click :]
+
+    If you were lazy enough you may have found it the hidden Nemoji :3 
+    if u did find it then imma just say:
+    How the hell are you so damm lazy you frikin Brat!
     
     See you again soon dear player! Cyaaaaaa~~`
     );
@@ -468,7 +471,7 @@ function updateMailWindow(){
             unreadMail=mails.some(m=>!m.read);
             updateMailGlow();
         };
-        mailContent.appendChild(div);
+        mailList.appendChild(div);
     });
 }
 function startQTE(){
@@ -1367,7 +1370,7 @@ setInterval(()=>{
 loadGame();
 if(mails.length==0){
     addMail(
-        "Welcome to NLC!",
+        "Welcome to NLC! (Touch Me pleaseeee :3)",
         `Hello Player!
         Welcome to NLC a chaotic satisfying idle clicker game 
         made by yours truly Nemo Donut!

@@ -514,7 +514,8 @@ button, img, #nemo{
     top: 50%;
     transform: translate(-50%, -50%);
     width: 520px;
-    height: 520px;
+    height: 540px;
+    overflow-y: hidden;
     background: #363636;
     border: 4px solid white;
     border-radius: 15px;
@@ -699,7 +700,7 @@ button, img, #nemo{
     top: 50%;
     transform: translate(-50%,-50%);
     width: 700px;
-    height: 500px;
+    height: 400px;
     background: #363636;
     border: 4px solid white;
     border-radius: 14px;
@@ -712,17 +713,19 @@ button, img, #nemo{
 #mailList{
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 20px;
+    font-size: 1.5rem;
     overflow-y: auto;
-    border-bottom: 2px solid white;
     margin: 10px 0;
 }
 
 #mailContent{
+    width: auto;
+    font-size: 1.4rem;
     white-space: pre-wrap;
     line-height: 1.5;
     overflow-y: auto;
-    height: 250px;
+    height: 350px;
 }
 
 #mailButton:hover{
@@ -1063,4 +1066,33 @@ button, img, #nemo{
     text-align: center;
     font-size: .95rem;
     color: #ddd;
+}
+
+.backMailButton{
+    font-family: "Determination", sans-serif;
+    width: 70px;
+    min-height: 40px;
+    background: #565656;
+    border: 3px solid white;
+    border-radius: 18px;
+    color: white;
+    padding: 12px;
+    cursor: pointer;
+    transition: .18s;
+    box-shadow: 0 6px 15px rgba(215, 215, 215, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.backMailButton:hover{
+    transform: translateY(-4px);
+    background: #7e7e7e;
+    box-shadow: 0 0 18px rgba(221, 221, 221, 0.25);
+}
+
+.backMailButton:active{
+    transform: scale(.97);
 }
