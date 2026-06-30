@@ -161,7 +161,3 @@ Created by **Nemo Donut**
 Made for the **Hack Club BEEST YSWS**.
 
 ---
-
-# 📜 License
-
-This project is open source under the MIT License.
