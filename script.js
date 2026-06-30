@@ -1193,23 +1193,7 @@ function loadGame(){
     if(equippedNemoji){
         nemo.src = equippedNemoji;
     }
-    if(mails.length==0){
-        addMail(
-            "Welcome to NLC!"
-        `Hello Player!
-        Welcome to NLC a chaotic satisfying idle clicker game 
-        made by yours truly Nemo Donut!
-        This game was made as a submission for the Beest YSWS Event by HackClub.
-        
-        Rules are simple:
-        - Click
-        - Click More
-        - Click Again
-        - Keeeeep Clickkinggggg!!
-        
-        Have fun!!`
-        );
-    }
+    
     updateCounter();
     updateTitle();
     updateMailWindow();
@@ -1229,15 +1213,13 @@ shopButton.addEventListener("click", ()=>{
     shopOverlay.style.display = "block";
     updateMusic();
 });
-mailButton.onclick=()=>{
-    mailWindow.style.display="block";
-};
 shopOverlay.addEventListener("click", ()=>{
     shop.style.display = "none";
     foodShop.style.display = "none";
     shopOverlay.style.display = "none";
     collectionWindow.style.display = "none";
     audioWindow.style.display = "none";
+    mailWindow.style.display = "none";
     updateMusic();
 });
 foodButton.addEventListener("click", ()=>{
@@ -1256,6 +1238,12 @@ audioButton.addEventListener("click",()=>{
     audioWindow.style.display = "block";
     shopOverlay.style.display = "block";
     updateMusic();
+});
+mailButton.addEventListener("click", ()=>{
+    mailWindow.style.display = "block";
+    shopOverlay.style.display = "block";
+    updateMusic();
+    updateMailGlow();
 });
 musicSlider.addEventListener("input",()=>{
     bgMusic.volume = musicSlider.value;
@@ -1363,6 +1351,25 @@ setInterval(()=>{
     }
 }, 1000);
 loadGame();
+console.log(mails);
+if(mails.length==0){
+        addMail(
+            "Welcome to NLC!",
+        `Hello Player!
+        Welcome to NLC a chaotic satisfying idle clicker game 
+        made by yours truly Nemo Donut!
+        This game was made as a submission for the Beest YSWS Event by HackClub.
+        
+        Rules are simple:
+        - Click
+        - Click More
+        - Click Again
+        - Keeeeep Clickkinggggg!!
+        
+        Have fun!!`
+        );
+}
+updateMailWindow();
 updateCursorFollowers();
 animateFollowers();
 updateShop();
