@@ -107,7 +107,8 @@ const breakables = [
     foodButton,
     collectionButton,
     audioButton,
-    bossHPContainer
+    bossHPContainer,
+    mailButton
 ];
 const secretNemoji = {
     name: "You Lazy Sussy Baka!",
@@ -617,11 +618,11 @@ function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
 function updateTitle(){
-    if(unlockSecretNemoji){
+    if(secretNemojiUnlocked){
         playerTitle.textContent = "Why are you doing this to me?! You Lazy Baka!!";
         unlockAchievement("Why are you doing this to me?! You Lazy Baka!!");
     }
-    else if(clicks >= 2000){
+    if(clicks >= 2000){
         playerTitle.textContent = "Nemo's Favourite Earthian";
         unlockAchievement("Nemo's Favourite Earthian");
     }
@@ -1008,7 +1009,11 @@ function unlockSecretNemoji(){
     }
     secretNemojiUnlocked = true;
     unlockAchievement("Why are you doing this to me?! You Lazy Baka!!");
-    createUnlockCard(secretNemoji);
+    createUnlockCard({
+        name: secretNemoji.name,
+        rarity: "UNKNOWN",
+        src: secretNemoji.sprite
+    });
     updateNemojiPage();
     saveGame();
 }
@@ -1147,8 +1152,20 @@ function updateNemojiPage(){
         card.className="nemojiCard";
         card.innerHTML=`
             <img src="${secretNemoji.sprite}">
-            <h3>${secretNemoji.name}</h3>
+            <div>
+                <b>${secretNemoji.name}</b><br>
+                Sussy Baka Nemoji
+            </div>
         `;
+        if(equippedNemoji === secretNemoji.sprite){
+            card.classList.add("equipped");
+        }
+        card.onclick = ()=>{
+            equippedNemoji = secretNemoji.sprite;
+            updateNemoSprite();
+            updateNemojiPage();
+            saveGame();
+        };
         nemojiPage.appendChild(card);
     }
 }
@@ -1223,7 +1240,14 @@ function loadGame(){
     unlockedNemojis = saveData.unlockedNemojis || [0];
     equippedNemoji = saveData.equippedNemoji || null;
     lastUnlockedNemoji = saveData.lastUnlockedNemoji || equippedNemoji;
-    currentNemoji = saveData.currentNemoji || 0;
+    currentNemoji = saveData.currentNemoji ?? 0;
+    if(
+        currentNemoji < 0 ||
+        currentNemoji >= nemojis.length ||
+        !nemojis[currentNemoji]
+    ){
+        currentNemoji = nemojis.length - 1;
+    }
     maxHP = nemojis[currentNemoji].hp;
     hp = saveData.hp ?? maxHP;
     if(hp<0){
