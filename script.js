@@ -52,6 +52,8 @@ const buyCursorCost = document.getElementById("buyCursorCost");
 const buyClankerCost = document.getElementById("buyClankerCost");
 const buyClankerJuiceCost = document.getElementById("buyClankerJuiceCost");
 const buyEnergyDrinkCost = document.getElementById("buyEnergyDrinkCost");
+const backMail = document.getElementById("backMail");
+const mailText = document.getElementById("mailText");
 const sansFacesPhase1 = [
     "assets/phase 1 faces/tile000.png",
     "assets/phase 1 faces/tile001.png",
@@ -459,7 +461,9 @@ function updateMailWindow(){
         const div=document.createElement("div");
         div.textContent=mail.title;
         div.onclick=()=>{
-            mailContent.textContent=mail.body;
+            mailText.textContent=mail.body;
+            mailList.style.display="none";
+            backMail.style.display="block";
             mail.read=true;
             unreadMail=mails.some(m=>!m.read);
             updateMailGlow();
@@ -568,8 +572,8 @@ function addMail(title,body){
         read:false
     });
     unreadMail=true;
-    updateMailGlow();
     updateMailWindow();
+    updateMailGlow();
     saveGame();
 }
 function evolveNemoji(){
@@ -1242,8 +1246,18 @@ audioButton.addEventListener("click",()=>{
 mailButton.addEventListener("click", ()=>{
     mailWindow.style.display = "block";
     shopOverlay.style.display = "block";
+    mailList.style.display = "flex";
+    backMail.style.display = "none";
+    mailText.textContent = "Select a mail to view!";
+    updateMailWindow();
+    unreadMail=false;
     updateMusic();
     updateMailGlow();
+});
+backMail.addEventListener("click",()=>{
+    mailList.style.display="flex";
+    backMail.style.display="none";
+    mailText.textContent="Select a mail to view!";
 });
 musicSlider.addEventListener("input",()=>{
     bgMusic.volume = musicSlider.value;
@@ -1351,10 +1365,9 @@ setInterval(()=>{
     }
 }, 1000);
 loadGame();
-console.log(mails);
 if(mails.length==0){
-        addMail(
-            "Welcome to NLC!",
+    addMail(
+        "Welcome to NLC!",
         `Hello Player!
         Welcome to NLC a chaotic satisfying idle clicker game 
         made by yours truly Nemo Donut!
@@ -1367,7 +1380,7 @@ if(mails.length==0){
         - Keeeeep Clickkinggggg!!
         
         Have fun!!`
-        );
+    );
 }
 updateMailWindow();
 updateCursorFollowers();

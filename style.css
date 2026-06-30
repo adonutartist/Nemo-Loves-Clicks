@@ -704,16 +704,18 @@ button, img, #nemo{
     border: 4px solid white;
     border-radius: 14px;
     display: none;
-    z-index: 7000;
+    z-index: 9999;
     padding: 20px;
     overflow: hidden;
 }
 
 #mailList{
-    height: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     overflow-y: auto;
     border-bottom: 2px solid white;
-    margin-bottom: 15px;
+    margin: 10px 0;
 }
 
 #mailContent{
