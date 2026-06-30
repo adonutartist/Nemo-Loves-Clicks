@@ -460,7 +460,8 @@ button, img, #nemo{
 #clickCounter,
 #streakCounter,
 #multiplierDisplay,
-#playerTitle{
+#playerTitle,
+#nemoNetButton{
     position: fixed;
     right: 40px;
     text-align: right;
@@ -1111,5 +1112,121 @@ button, img, #nemo{
 }
 
 .backMailButton:active{
+    transform: scale(.97);
+}
+
+#nemoNetButton{
+    height: 96px;
+    width: 96px;
+    top: 550px;
+    transition: .15s;
+}
+
+#nemoNetButton:hover{
+    transform: scale(1.1);
+}
+
+#nemoNetButton:active{
+    transform: scale(.95);
+}
+
+#nemoNetWindow{
+    font-family: "Determination", sans-serif;
+    position: absolute;
+    width: 550px;
+    height: 650px;
+    background: #363636;
+    border: 3px solid white;
+    border-radius: 12px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    display: none;
+    color: white;
+    padding: 20px;
+    overflow: hidden;
+    overflow-y: auto;
+    z-index: 9999;
+}
+
+#leaderboardList{
+    height: 140px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+#messageList{
+    height: 180px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.leaderboardEntry{
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 4px;
+}
+
+.messageEntry{
+    border-bottom: 1px solid #333;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+
+.greenDot{
+    width: 10px;
+    height: 10px;
+    background: #00ff00;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+#playerNameInput,
+#playerMessageInput{
+    width: 100%;
+    margin-top: 8px;
+    background: #2b2b2b;
+    color: white;
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+#playerMessageInput{
+    height: 80px;
+    resize: none;
+}
+
+#broadcastButton{
+    font-family: "Determination", sans-serif;
+    margin-top: 12px;
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #565656;
+    border: 3px solid white;
+    border-radius: 18px;
+    color: white;
+    transition: .18s;
+    box-shadow: 0 6px 15px rgba(215, 215, 215, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+#broadcastButton:hover{
+    transform: translateY(-4px);
+    background: #7e7e7e;
+    box-shadow: 0 0 18px rgba(221, 221, 221, 0.25);
+}
+
+#broadcastButton:active{
     transform: scale(.97);
 }

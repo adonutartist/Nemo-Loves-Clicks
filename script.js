@@ -5,6 +5,13 @@ window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+const nemoNetButton = document.getElementById("nemoNetButton");
+const nemoNetWindow = document.getElementById("nemoNetWindow");
+const leaderboardList = document.getElementById("leaderboardList");
+const messageList = document.getElementById("messageList");
+const playerNameInput = document.getElementById("playerNameInput");
+const playerMessageInput = document.getElementById("playerMessageInput");
+const broadcastButton = document.getElementById("broadcastButton");
 const screens = document.querySelectorAll(".intro-text");
 const intro = document.getElementById("intro");
 const game = document.getElementById("game");
@@ -284,27 +291,76 @@ const streakCounter = document.getElementById("streakCounter");
 const comboTitle = document.getElementById("comboTitle");
 const comboNumber = document.getElementById("comboNumber");
 async function uploadScore(name,message){
-    const {data, error} = await supabaseClient
+    await supabaseClient
     .from("leaderboard")
+    .upsert({
+        player_name: name,
+        clicks: Math.floor(clicks)
+    }, {
+        onConflict: "player_name"
+    });
+    await supabaseClient
+    .from("messages")
     .insert({
-        player_name:name,
-        clicks:clicks,
-        message:message
-    })
-    .select();
-    console.log("DATA:",data);
-    console.log("ERROR:",error);
+        player_name: name,
+        message: message
+    });
 }
 async function loadLeaderboard(){
-    const {data,error}=await supabaseClient
+    const {data, error} = await supabaseClient
+    .from("leaderboard")
+    .select("*")
+    .order("clicks", {
+        ascending: false
+    })
+    .limit(10);
+    console.log("Leaderboard");
+    console.log(data);
+}
+async function loadMessages(){
+    const {data, error} = await supabaseClient
+    .from("messages")
+    .select("*")
+    .order("created_at", {
+        ascending: false
+    })
+    .limit(20);
+    console.log("Messages");
+    console.log(data);
+}
+async function updateNemoNet(){
+    const {data:leaders}=await supabaseClient
     .from("leaderboard")
     .select("*")
     .order("clicks",{
         ascending:false
     })
-    .limit(25);
-    console.log("DATA:",data);
-    console.log("ERROR:",error);
+    .limit(10);
+    leaderboardList.innerHTML="";
+    leaders.forEach((player,index)=>{
+        leaderboardList.innerHTML+=`
+        <div class="leaderboardEntry">
+        <span>${index+1}. ${player.player_name}</span>
+        <span>${player.clicks}</span>
+        </div>
+        `;
+    });
+    const {data:messages}=await supabaseClient
+    .from("messages")
+    .select("*")
+    .order("created_at",{
+        ascending:false
+    })
+    .limit(15);
+    messageList.innerHTML="";
+    messages.forEach(msg=>{
+        messageList.innerHTML+=`
+        <div class="messageEntry">
+        <b>${msg.player_name}</b><br>
+        ${msg.message}
+        </div>
+        `;
+    });
 }
 function spawnClanker(){
     const clanker = document.createElement("img");
@@ -1304,6 +1360,7 @@ function loadGame(){
     updateNemojiPage();
     updateHP();
     updateAchievementPage();
+    playerNameInput.value = localStorage.getItem("nemoUsername") || "";
 }
 toggleCrit.onchange=()=>{critSFXEnabled=toggleCrit.checked};
 toggleOra.onchange=()=>{oraSFXEnabled=toggleOra.checked};
@@ -1322,6 +1379,7 @@ shopOverlay.addEventListener("click", ()=>{
     collectionWindow.style.display = "none";
     audioWindow.style.display = "none";
     mailWindow.style.display = "none";
+    nemoNetWindow.style.display = "none";
     updateMusic();
 });
 foodButton.addEventListener("click", ()=>{
@@ -1335,6 +1393,25 @@ collectionButton.addEventListener("click", ()=>{
     updateMusic();
     newCollectionUnlock = false;
     updateChestGlow();
+});
+nemoNetButton.addEventListener("click",()=>{
+    nemoNetWindow.style.display="block";
+    shopOverlay.style.display="block";
+    updateNemoNet();
+});
+broadcastButton.addEventListener("click",async()=>{
+    if(playerNameInput.value=="") return;
+    if(playerMessageInput.value=="") return;
+    localStorage.setItem(
+        "nemoUsername",
+        playerNameInput.value
+    );
+    await uploadScore(
+        playerNameInput.value,
+        playerMessageInput.value
+    );
+    playerMessageInput.value="";
+    updateNemoNet();
 });
 audioButton.addEventListener("click",()=>{
     audioWindow.style.display = "block";
@@ -1482,6 +1559,11 @@ updateMailWindow();
 updateCursorFollowers();
 animateFollowers();
 updateShop();
+setInterval(()=>{
+    if(nemoNetWindow.style.display=="block"){
+        updateNemoNet();
+    }
+},5000);
 
 document.addEventListener("click", ()=>{
     bgMusic.play();
