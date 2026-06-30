@@ -1,3 +1,10 @@
+const SUPABASE_URL = "https://qupmwctzovgcpwuchvzi.supabase.co";
+const SUPABASE_KEY = "sb_publishable_e1Qc1JgC4ZCu33De7QbxRQ_lFWDh0JF";
+const supabaseClient = 
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 const screens = document.querySelectorAll(".intro-text");
 const intro = document.getElementById("intro");
 const game = document.getElementById("game");
@@ -276,6 +283,29 @@ const clickCounter = document.getElementById("clickCounter");
 const streakCounter = document.getElementById("streakCounter");
 const comboTitle = document.getElementById("comboTitle");
 const comboNumber = document.getElementById("comboNumber");
+async function uploadScore(name,message){
+    const {data, error} = await supabaseClient
+    .from("leaderboard")
+    .insert({
+        player_name:name,
+        clicks:clicks,
+        message:message
+    })
+    .select();
+    console.log("DATA:",data);
+    console.log("ERROR:",error);
+}
+async function loadLeaderboard(){
+    const {data,error}=await supabaseClient
+    .from("leaderboard")
+    .select("*")
+    .order("clicks",{
+        ascending:false
+    })
+    .limit(25);
+    console.log("DATA:",data);
+    console.log("ERROR:",error);
+}
 function spawnClanker(){
     const clanker = document.createElement("img");
     clanker.src = "assets/attachments (2)/sprite (27).png"
@@ -1154,7 +1184,7 @@ function updateNemojiPage(){
             <img src="${secretNemoji.sprite}">
             <div>
                 <b>${secretNemoji.name}</b><br>
-                Sussy Baka Nemoji
+                Unlock: Make 4 clankers torment a cute lil Nemoji :< How can you be so RUTHLESS!?
             </div>
         `;
         if(equippedNemoji === secretNemoji.sprite){
