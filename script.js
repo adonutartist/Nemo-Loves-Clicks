@@ -54,6 +54,7 @@ const buyClankerJuiceCost = document.getElementById("buyClankerJuiceCost");
 const buyEnergyDrinkCost = document.getElementById("buyEnergyDrinkCost");
 const backMail = document.getElementById("backMail");
 const mailText = document.getElementById("mailText");
+const glow = document.getElementById("glow");
 const sansFacesPhase1 = [
     "assets/phase 1 faces/tile000.png",
     "assets/phase 1 faces/tile001.png",
@@ -108,6 +109,11 @@ const breakables = [
     audioButton,
     bossHPContainer
 ];
+const secretNemoji = {
+    name: "You Lazy Sussy Baka!",
+    sprite: "assets/attachments (2)/sprite (23).png",
+    hp: 2000,
+};
 const nemojis = [
     {
         name: "Happy Nemo",
@@ -221,6 +227,7 @@ let qteTime = 5;
 let sansDefeated = false;
 let mails = [];
 let unreadMail = false;
+let secretNemojiUnlocked = false;
 function nextScreen(){
     if(current >= screens.length){ 
         return;
@@ -468,8 +475,9 @@ function updateMailWindow(){
             mailList.style.display="none";
             backMail.style.display="block";
             mail.read=true;
-            unreadMail=mails.some(m=>!m.read);
+            unreadMail=mails.some(mail=>!mail.read);
             updateMailGlow();
+            saveGame();
         };
         mailList.appendChild(div);
     });
@@ -609,19 +617,23 @@ function updateCounter(){
     clickCounter.textContent = clicks + " Clicks";
 }
 function updateTitle(){
-    if(clicks >= 650){
+    if(unlockSecretNemoji){
+        playerTitle.textContent = "Why are you doing this to me?! You Lazy Baka!!";
+        unlockAchievement("Why are you doing this to me?! You Lazy Baka!!");
+    }
+    else if(clicks >= 2000){
         playerTitle.textContent = "Nemo's Favourite Earthian";
         unlockAchievement("Nemo's Favourite Earthian");
     }
-    else if(clicks >= 500){
+    else if(clicks >= 675){
         playerTitle.textContent = "Addicted to Clicking";
         unlockAchievement("Addicted to Clicking");
     }
-    else if(clicks >= 350){
+    else if(clicks >= 450){
         playerTitle.textContent = "Loves Clicking";
         unlockAchievement("Loves Clicking");
     }
-    else if(clicks >= 200){
+    else if(clicks >= 225){
         playerTitle.textContent =  "Click Click Click!";
         unlockAchievement("Click Click Click!");
     }
@@ -965,6 +977,13 @@ function startClankerLoop(){
                 updateCounter();
             }
             hp -= clankers;
+            if(
+                !bossFight &&
+                hp <= 0 &&
+                clankers >= 4
+            ){
+                unlockSecretNemoji();
+            }
             for(let i=0;i<clankers;i++){
                 createRobotPopup(1);
             }
@@ -982,6 +1001,16 @@ function startClankerLoop(){
         window.clankerTimer = setTimeout(attack, getClankerSpeed());
     }
     attack();
+}
+function unlockSecretNemoji(){
+    if(secretNemojiUnlocked){
+        return;
+    }
+    secretNemojiUnlocked = true;
+    unlockAchievement("Why are you doing this to me?! You Lazy Baka!!");
+    createUnlockCard(secretNemoji);
+    updateNemojiPage();
+    saveGame();
 }
 function createPopup(value, isCrit){
     const popup = document.createElement("div");
@@ -1113,6 +1142,15 @@ function updateNemojiPage(){
         };
         nemojiPage.appendChild(card);
     });
+    if(secretNemojiUnlocked){
+        const card=document.createElement("div");
+        card.className="nemojiCard";
+        card.innerHTML=`
+            <img src="${secretNemoji.sprite}">
+            <h3>${secretNemoji.name}</h3>
+        `;
+        nemojiPage.appendChild(card);
+    }
 }
 function updateAchievementPage(){
     achievementPage.innerHTML = "";
@@ -1146,7 +1184,8 @@ function saveGame(){
         unlockedNemojis: unlockedNemojis,
         sansDefeated: sansDefeated,
         sansUnlocked: sansUnlocked,
-        mails:mails
+        mails:mails,
+        secretNemojiUnlocked    
     };
     localStorage.setItem(
         "nemoSave",
@@ -1196,6 +1235,7 @@ function loadGame(){
     unlockedNemojis = saveData.unlockedNemojis||[0];
     sansDefeated = saveData.sansDefeated || false;
     sansUnlocked = saveData.sansUnlocked || false;
+    secretNemojiUnlocked = saveData.secretNemojiUnlocked || false;
     mails=saveData.mails||[];
     if(equippedNemoji){
         nemo.src = equippedNemoji;
@@ -1204,6 +1244,7 @@ function loadGame(){
     updateCounter();
     updateTitle();
     updateMailWindow();
+    unreadMail = mails.some(mail => !mail.read);
     updateMailGlow();
     updateShop();
     updateNemojiPage();
@@ -1253,9 +1294,7 @@ mailButton.addEventListener("click", ()=>{
     backMail.style.display = "none";
     mailText.textContent = "Select a mail to view!";
     updateMailWindow();
-    unreadMail=false;
     updateMusic();
-    updateMailGlow();
 });
 backMail.addEventListener("click",()=>{
     mailList.style.display="flex";
