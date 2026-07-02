@@ -122,7 +122,8 @@ const breakables = [
     collectionButton,
     audioButton,
     bossHPContainer,
-    mailButton
+    mailButton,
+    nemoNetButton
 ];
 const secretNemoji = {
     name: "You Lazy Sussy Baka!",
@@ -338,12 +339,15 @@ async function updateNemoNet(){
     .limit(10);
     leaderboardList.innerHTML="";
     leaders.forEach((player,index)=>{
-        leaderboardList.innerHTML+=`
-        <div class="leaderboardEntry">
-        <span>${index+1}. ${player.player_name}</span>
-        <span>${player.clicks}</span>
-        </div>
-        `;
+        const row=document.createElement("div");
+        row.className="leaderboardEntry";
+        const left=document.createElement("span");
+        left.textContent=`${index+1}. ${player.player_name}`;
+        const right=document.createElement("span");
+        right.textContent=player.clicks;
+        row.appendChild(left);
+        row.appendChild(right);
+        leaderboardList.appendChild(row);
     });
     const {data:messages}=await supabaseClient
     .from("messages")
@@ -354,12 +358,18 @@ async function updateNemoNet(){
     .limit(15);
     messageList.innerHTML="";
     messages.forEach(msg=>{
-        messageList.innerHTML+=`
-        <div class="messageEntry">
-        <b>${msg.player_name}</b><br>
-        ${msg.message}
-        </div>
-        `;
+        const entry=document.createElement("div");
+        entry.className="messageEntry";
+        const name=document.createElement("b");
+        name.textContent=msg.player_name;
+        const br=document.createElement("br");
+        const text=document.createElement("span");
+        text.textContent=msg.message;
+        entry.appendChild(name);
+        entry.appendChild(br);
+        entry.appendChild(text);
+        messageList.appendChild(entry);
+
     });
 }
 function spawnClanker(){
@@ -1400,15 +1410,32 @@ nemoNetButton.addEventListener("click",()=>{
     updateNemoNet();
 });
 broadcastButton.addEventListener("click",async()=>{
-    if(playerNameInput.value=="") return;
-    if(playerMessageInput.value=="") return;
+    const playerName = playerNameInput.value.trim();
+    const message = playerMessageInput.value.trim();
+    if(playerName=="") return;
+    if(message=="") return;
+    if(playerName.length > 20){
+        alert("Such a long usernme huh?? Frikin greater than 20 characters... Lad shorten your name or go touch some grass :p");
+        return;
+    }
+    if(message.length > 200){
+        alert("Such a long message huh? This ain't some essay writing competition lad this is a chatbox for puny tiny messages. Less than 200 characters to be precise :]");
+        return;
+    }
+    const blocked = /<|>|https?:\/\/|www\./i
+    if(blocked.test(playerName) ||
+       blocked.test(message)
+    ){
+        alert("Please just focus on clicking and not on altering the game code! Touch some grass lad.");
+        return;
+    }
     localStorage.setItem(
         "nemoUsername",
-        playerNameInput.value
+        playerName
     );
     await uploadScore(
-        playerNameInput.value,
-        playerMessageInput.value
+        playerName,
+        message
     );
     playerMessageInput.value="";
     updateNemoNet();

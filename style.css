@@ -1176,12 +1176,29 @@ button, img, #nemo{
 }
 
 .greenDot{
-    width: 10px;
-    height: 10px;
-    background: #00ff00;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 8px;
+    width:10px;
+    height:10px;
+    background:#1eff00;
+    border-radius:50%;
+    display:inline-block;
+    margin-right:8px;
+    box-shadow:0 0 10px #67ff53;
+    animation:pulseDot 1.8s infinite;
+}
+
+@keyframes pulseDot{
+    0%{
+        transform: scale(1);
+        box-shadow: 0 0 6px #1eff00;
+    }
+    50%{
+        transform: scale(1.25);
+        box-shadow: 0 0 18px #1eff00, 0 0 32px rgba(30,255,0,.45);
+    }
+    100%{
+        transform: scale(1);
+        box-shadow: 0 0 6px #1eff00;
+    }
 }
 
 #playerNameInput,
@@ -1229,4 +1246,36 @@ button, img, #nemo{
 
 #broadcastButton:active{
     transform: scale(.97);
+}
+
+::-webkit-scrollbar{
+    width:12px;
+    height:12px;
+}
+
+::-webkit-scrollbar-track{
+    background:#2a2a2a;
+    border-radius:12px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#8a8a8a;
+    border-radius:12px;
+    border:2px solid #2a2a2a;
+    transition:.2s;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#cfcfcf;
+}
+
+::-webkit-scrollbar-corner{
+    background:#2a2a2a;
+}
+
+#playerNameInput,
+#playerMessageInput{
+    width:calc(100% - 4px);
+    margin-right:16px;
+    box-sizing:border-box;
 }
