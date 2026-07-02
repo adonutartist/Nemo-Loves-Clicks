@@ -53,6 +53,7 @@ Features include:
 - Public message board.
 - Saves username.
 - Automatic refresh for new messages.
+- A thin security system to prohibit people from sending messages greater than 200 characters or HTML tags.
 
 ### Audio Settings
 Toggle individual sounds including:
@@ -71,9 +72,8 @@ Automatic save/load using LocalStorage.
 ---
 
 # Screenshots
-
-
-
+<img width="1920" height="1080" alt="Screenshot (73)" src="https://github.com/user-attachments/assets/798c0862-7cb8-42b9-b726-e8b217be2ad3" />
+<img width="1920" height="1080" alt="Screenshot (82)" src="https://github.com/user-attachments/assets/b3637b1e-cf62-4404-8374-fcdf641ffcd2" />
 ---
 
 # Play
